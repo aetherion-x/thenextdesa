@@ -1,0 +1,66 @@
+{
+  "site": {
+    "title": "Desa Slorok",
+    "description": "Website resmi Desa Slorok - Desa yang maju, mandiri, dan sejahtera"
+  },
+  "hero": {
+    "title": "Selamat Datang di Desa Slorok",
+    "subtitle": "Desa yang maju, mandiri, dan sejahtera untuk semua warga",
+    "backgroundImage": "/placeholder.svg?height=600&width=1200"
+  },
+  "infoCards": [
+    {
+      "icon": "fas fa-users",
+      "number": "2,500",
+      "label": "Jumlah Penduduk"
+    },
+    {
+      "icon": "fas fa-home",
+      "number": "650",
+      "label": "Kepala Keluarga"
+    },
+    {
+      "icon": "fas fa-map",
+      "number": "6,26542",
+      "label": "Luas Wilayah (km²)"
+    },
+    {
+      "icon": "fas fa-seedling",
+      "number": "3",
+      "label": "Dusun"
+    }
+  ],
+  "contact": {
+    "address": "Jl. Desa Slorok No. 123, Kecamatan Makmur, Kabupaten Sentosa, Provinsi Bahagia 12345",
+    "phone": "(021) 1234-5678",
+    "email": "info@desasejahtera.id",
+    "website": "https://desasejahtera.id",
+    "workingHours": {
+      "weekdays": "Senin - Jumat: 08:00 - 16:00 WIB",
+      "saturday": "Sabtu: 08:00 - 12:00 WIB",
+      "sunday": "Minggu: Tutup"
+    },
+    "socialMedia": [
+      {
+        "platform": "facebook",
+        "icon": "fab fa-facebook",
+        "url": "https://facebook.com/desasejahtera"
+      },
+      {
+        "platform": "instagram",
+        "icon": "fab fa-instagram",
+        "url": "https://instagram.com/desasejahtera"
+      },
+      {
+        "platform": "twitter",
+        "icon": "fab fa-twitter",
+        "url": "https://twitter.com/desasejahtera"
+      },
+      {
+        "platform": "youtube",
+        "icon": "fab fa-youtube",
+        "url": "https://youtube.com/desasejahtera"
+      }
+    ]
+  }
+}

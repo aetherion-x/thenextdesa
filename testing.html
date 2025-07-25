@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chart.js + Tailwind</title>
+  <!-- CDN Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- CDN Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+  <div class="container mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- Chart 1 -->
+      <div class="bg-white shadow-md rounded-lg p-4">
+        <h2 class="text-lg font-semibold mb-4 text-center">Bar Chart</h2>
+        <canvas id="chartBar"></canvas>
+      </div>
+
+      <!-- Chart 2 -->
+      <div class="bg-white shadow-md rounded-lg p-4">
+        <h2 class="text-lg font-semibold mb-4 text-center">Line Chart</h2>
+        <canvas id="chartLine"></canvas>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Bar Chart
+    const ctxBar = document.getElementById('chartBar').getContext('2d');
+    new Chart(ctxBar, {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+        datasets: [{
+          label: 'Penjualan',
+          data: [12, 19, 3, 5],
+          backgroundColor: 'rgba(59, 130, 246, 0.6)',
+          borderColor: 'rgba(59, 130, 246, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+
+    // Line Chart
+    const ctxLine = document.getElementById('chartLine').getContext('2d');
+    new Chart(ctxLine, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+        datasets: [{
+          label: 'Pendapatan',
+          data: [5, 10, 8, 15],
+          backgroundColor: 'rgba(16, 185, 129, 0.3)',
+          borderColor: 'rgba(16, 185, 129, 1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+  </script>
+
+  <style>
+    canvas {
+      width: 100% !important;
+      height: 300px !important;
+    }
+  </style>
+</body>
+</html>

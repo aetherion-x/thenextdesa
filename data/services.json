@@ -1,0 +1,95 @@
+{
+  "services": [
+    {
+      "id": "surat-keterangan",
+      "title": "Surat Keterangan",
+      "icon": "fas fa-file-alt",
+      "description": "Pengurusan berbagai surat keterangan seperti domisili, tidak mampu, usaha, dll.",
+      "flowContent": "<h4><b>Berkas yang disiapkan:</b></h4><p>Satu dokumen Kartu Keluarga (KK)</p>" 
+    },
+    {
+      "id": "surat-pengantar-pernikahan",
+      "title": "Surat Pengantar Pernikahan",
+      "icon": "fas fa-file-alt",
+      "description": "Lorem ipsum..",
+      "flowContent": "<h4><b>Berkas yang disiapkan:</b></h4><p>Satu dokumen Kartu Keluarga (KK)</p>" 
+    },
+    {
+      "id": "surat-pengantar-perceraian",
+      "title": "Surat Pengantar Perceraian",
+      "icon": "fas fa-file-alt",
+      "description": "Lorem ipsum..",
+      "flowContent": "<h4><b>Berkas yang disiapkan:</b></h4><p>Satu dokumen Kartu Keluarga (KK)</p>"       
+    },
+    {
+      "id": "surat-pengantar-skck",
+      "title": "Surat Pengantar SKCK",
+      "icon": "fas fa-file-alt",
+      "description": "Lorem ipsum..",
+      "flowContent": "<h4><b>Berkas yang disiapkan:</b></h4><p>Satu dokumen Kartu Keluarga (KK)</p>"      
+    },
+    {
+      "id": "surat-keterangan-hubungan-keluarga",
+      "title": "Surat Keterangan Hubungan Keluarga",
+      "icon": "fas fa-file-alt",
+      "description": "Lorem ipsum..",
+      "flowContent": "<h4><b>Berkas yang disiapkan:</b></h4><p>Satu dokumen Kartu Keluarga (KK)</p>" 
+    },
+    {
+      "id": "surat-keterangan-kelahiran",
+      "title": "Surat Keterangan Kelahiran",
+      "icon": "fas fa-file-alt",
+      "description": "Lorem ipsum..",
+      "flowContent": "<h4><b>Berkas yang disiapkan:</b></h4><p>Satu dokumen Kartu Keluarga (KK)</p>" 
+    },
+      {
+      "id": "surat-keterangan-kematian",
+      "title": "Surat Keterangan Kematian",
+      "icon": "fas fa-file-alt",
+      "description": "Lorem ipsum..",
+      "flowContent": "<h4><b>Berkas yang disiapkan:</b></h4><p>Satu dokumen Kartu Keluarga (KK)</p>" 
+    },
+    {
+      "id": "surat-keterangan-domisili-usaha",
+      "title": "Surat Keterangan Domisili Usaha",
+      "icon": "fas fa-file-alt",
+      "description": "Lorem ipsum..",
+      "flowContent": "<h4><b>Berkas yang disiapkan:</b></h4><p>Satu dokumen Kartu Keluarga (KK)</p>" 
+    },
+    {
+      "id": "surat-izin-keluarga",
+      "title": "Surat Izin Keluarga",
+      "icon": "fas fa-file-alt",
+      "description": "Lorem ipsum..",
+      "flowContent": "<h4><b>Berkas yang disiapkan:</b></h4><p>Satu dokumen Kartu Keluarga (KK)</p>" 
+    },
+    {
+      "id": "surat-pernyataan-perubahan-biodata",
+      "title": "Surat Pernyataan Perubahan Biodata",
+      "icon": "fas fa-file-alt",
+      "description": "Lorem ipsum..",
+      "flowContent": "<h4><b>Berkas yang disiapkan:</b></h4><p>Satu dokumen Kartu Keluarga (KK)</p>"       
+    },
+    {
+      "id": "surat-perubahan-kartu-keluarga",
+      "title": "Surat Perubahan Kartu Keluarga",
+      "icon": "fas fa-file-alt",
+      "description": "Lorem ipsum..",
+      "flowContent": "<h4><b>Berkas yang disiapkan:</b></h4><p>Satu dokumen Kartu Keluarga (KK)</p>"      
+    },
+    {
+      "id": "surat-pindah-tempat",
+      "title": "Surat Pindah Tempat",
+      "icon": "fas fa-file-alt",
+      "description": "Lorem ipsum..",
+      "flowContent": "<h4><b>Berkas yang disiapkan:</b></h4><p>Satu dokumen Kartu Keluarga (KK)</p>"      
+    },
+    {
+      "id": "surat-keterangan-tidak-mampu",
+      "title": "Surat Keterangan Tidak Mampu",
+      "icon": "fas fa-file-alt",
+      "description": "Lorem ipsum..",
+      "flowContent": "<h4><b>Berkas yang disiapkan:</b></h4><p>Satu dokumen Kartu Keluarga (KK)</p>"    
+    }
+  ]
+  }

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Desa Slorok - Beranda</title>
+    <link rel="icon" type="image/png" href="assets/img/logo.png" />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css" />
+
+    <!-- Tailwind Config -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              poppins: ["Poppins", "sans-serif"],
+            },
+            colors: {
+              primary: {
+                50: "#f0f9f0",
+                100: "#dcf2dc",
+                200: "#bce5bc",
+                300: "#8dd18d",
+                400: "#4caf50",
+                500: "#2e7d32",
+                600: "#1b5e20",
+                700: "#174e1a",
+                800: "#153f17",
+                900: "#133515",
+              },
+              accent: "#ff6b35",
+            },
+          },
+        },
+        darkMode: "class",
+      };
+    </script>
+  </head>
+  <body
+    class="font-poppins bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300"
+  >
+    <!-- Loading Animation -->
+    <div
+      id="loading"
+      class="fixed inset-0 bg-white dark:bg-gray-900 flex flex-col justify-center items-center z-50 transition-opacity duration-500"
+    >
+      <div
+        class="w-12 h-12 border-4 border-gray-200 border-t-primary-500 rounded-full animate-spin mb-4"
+      ></div>
+      <p class="text-gray-600 dark:text-gray-300">Memuat...</p>
+    </div>
+
+    <!-- Header -->
+    <header
+      class="fixed top-0 left-0 w-full h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 z-40 transition-colors duration-300"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between"
+      >
+        <div class="flex items-center space-x-3">
+          <img
+            src="assets/img/logo.png"
+            alt="Logo Desa"
+            class="w-10 h-10 rounded-full"
+          />
+          <span
+            class="text-lg font-semibold text-primary-600 dark:text-primary-400"
+            >Desa Slorok</span
+          >
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="hidden md:block">
+          <ul class="flex space-x-8">
+            <li>
+              <a
+                href="index.html"
+                class="flex items-center space-x-2 px-3 py-2 rounded-lg text-primary-600 bg-primary-50 dark:bg-primary-900/20 transition-all duration-200"
+              >
+                <i class="fas fa-home"></i>
+                <span>Beranda</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="profil.html"
+                class="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-200"
+              >
+                <i class="fas fa-info-circle"></i>
+                <span>Profile Desa</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="infografis.html"
+                class="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-200"
+              >
+                <i class="fas fa-chart-bar"></i>
+                <span>Infografis</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="layanan.html"
+                class="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-200"
+              >
+                <i class="fas fa-cogs"></i>
+                <span>Layanan</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="bumdes.html"
+                class="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-200"
+              >
+                <i class="fas fa-store"></i>
+                <span>bumdes</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Header Controls -->
+        <div class="flex items-center space-x-4">
+          <button
+            id="darkModeToggle"
+            class="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:border-primary-600 transition-all duration-200"
+          >
+            <i class="fas fa-moon"></i>
+          </button>
+          <button
+            class="md:hidden w-10 h-10 flex flex-col justify-center items-center space-y-1"
+            id="mobileMenuToggle"
+          >
+            <span
+              class="w-6 h-0.5 bg-gray-600 dark:bg-gray-300 transition-all duration-300"
+            ></span>
+            <span
+              class="w-6 h-0.5 bg-gray-600 dark:bg-gray-300 transition-all duration-300"
+            ></span>
+            <span
+              class="w-6 h-0.5 bg-gray-600 dark:bg-gray-300 transition-all duration-300"
+            ></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <nav
+        id="mobileMenu"
+        class="md:hidden hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700"
+      >
+        <ul class="px-4 py-2 space-y-1">
+          <li>
+            <a
+              href="index.html"
+              class="flex items-center space-x-3 px-3 py-3 rounded-lg text-primary-600 bg-primary-50 dark:bg-primary-900/20 transition-colors duration-200"
+            >
+              <i class="fas fa-home w-5"></i>
+              <span>Beranda</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="profil.html"
+              class="flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+            >
+              <i class="fas fa-info-circle w-5"></i>
+              <span>Profile Desa</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="infografis.html"
+              class="flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+            >
+              <i class="fas fa-chart-bar w-5"></i>
+              <span>Infografis</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="layanan.html"
+              class="flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+            >
+              <i class="fas fa-cogs w-5"></i>
+              <span>Layanan</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="bumdes.html"
+              class="flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+            >
+              <i class="fas fa-store w-5"></i>
+              <span>Bumdes</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+      <!-- Hero Section -->
+      <section
+        class="bg-gradient-to-br from-primary-50 to-green-50 dark:from-gray-800 dark:to-gray-900 py-16 lg:py-24"
+      >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div class="text-center lg:text-left">
+              <h1
+                class="text-4xl lg:text-5xl font-bold text-primary-600 dark:text-primary-400 mb-6 animate-fade-in-up"
+              >
+                Selamat Datang di Desa Slorok
+              </h1>
+              <p
+                class="text-lg text-gray-600 dark:text-gray-300 mb-8 animate-fade-in-up animation-delay-200"
+              >
+                Desa yang maju, mandiri, dan sejahtera untuk semua warga
+              </p>
+              <a
+                href="profil.html"
+                class="inline-block bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:-translate-y-1 hover:shadow-lg animate-fade-in-up animation-delay-400"
+              >
+                Jelajahi Desa
+              </a>
+            </div>
+            <div class="animate-fade-in-right animation-delay-600">
+              <img
+                src="assets/img/desa.jpg"
+                alt="Pemandangan Desa"
+                class="w-full h-auto rounded-xl shadow-lg"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Info Cards -->
+      <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div
+            id="infoCards"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
+            <!-- Cards will be populated by JavaScript -->
+          </div>
+        </div>
+      </section>
+
+      <!-- News Section -->
+      <section class="py-16 bg-gray-50 dark:bg-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12">
+            <h2
+              class="text-3xl font-bold text-primary-600 dark:text-primary-400 mb-4"
+            >
+              Galeri Kegiatan
+            </h2>
+            <p class="text-gray-600 dark:text-gray-300">
+              Foto foto kegiatan di desa slorok
+            </p>
+          </div>
+          <div
+            id="newsGrid"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            <!-- News cards will be populated by JavaScript -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer
+      class="bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-12"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          id="footerContent"
+          class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8"
+        >
+          <!-- Footer content will be populated by JavaScript -->
+        </div>
+
+        <div
+          class="border-t border-gray-200 dark:border-gray-700 pt-8 text-center text-gray-600 dark:text-gray-400"
+        >
+        <a href="hidden.html">
+          <p>
+            &copy; 2025 Develop by MMD FILKOM 18 Universitas Brawijaya . Semua
+            hak dilindungi.
+          </p>
+          </a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/home.js"></script>
+  </body>
+</html>

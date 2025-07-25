@@ -1,0 +1,64 @@
+{
+  "news": [
+    {
+      "id": 1,
+      "title": "Pembangunan Jalan Desa Tahap II Dimulai",
+      "excerpt": "Proyek pembangunan jalan desa tahap kedua telah dimulai dengan target penyelesaian dalam 3 bulan ke depan.",
+      "content": "Desa Slorok kembali melanjutkan program pembangunan infrastruktur dengan memulai proyek jalan desa tahap kedua. Proyek ini merupakan kelanjutan dari pembangunan tahap pertama yang telah berhasil diselesaikan tahun lalu. Dengan anggaran sebesar Rp 2,5 miliar yang bersumber dari Dana Desa dan APBD Kabupaten, pembangunan ini diharapkan dapat meningkatkan aksesibilitas warga menuju pusat desa dan fasilitas umum lainnya. Kepala Desa menyampaikan bahwa proyek ini akan melibatkan tenaga kerja lokal untuk memberikan dampak ekonomi langsung bagi masyarakat desa.",
+      "image": "assets/img/desa.jpg?height=300&width=500",
+      "date": "2024-01-15",
+      "author": "Tim Redaksi Desa",
+      "category": "Pembangunan"
+    },
+    {
+      "id": 2,
+      "title": "Program Pelatihan Keterampilan untuk Ibu-Ibu PKK",
+      "excerpt": "Dinas Pemberdayaan Masyarakat mengadakan pelatihan membuat kerajinan tangan untuk meningkatkan ekonomi keluarga.",
+      "content": "Sebanyak 50 ibu-ibu anggota PKK Desa Slorok mengikuti program pelatihan keterampilan membuat kerajinan tangan yang diselenggarakan selama 5 hari. Pelatihan ini bertujuan untuk meningkatkan keterampilan dan membuka peluang usaha bagi para ibu rumah tangga. Materi pelatihan meliputi pembuatan tas rajut, bros kain flanel, dan aksesoris dari bahan daur ulang. Instruktur pelatihan didatangkan langsung dari Dinas Perindustrian Kabupaten. Diharapkan setelah pelatihan ini, para peserta dapat mengembangkan usaha kecil di rumah masing-masing dan meningkatkan pendapatan keluarga.",
+      "image": "assets/img/desa.jpg?height=300&width=500",
+      "date": "2024-01-10",
+      "author": "Siti Aminah",
+      "category": "Sosial"
+    },
+    {
+      "id": 3,
+      "title": "Panen Raya Padi Musim Tanam Pertama",
+      "excerpt": "Petani desa merayakan hasil panen yang melimpah dengan produktivitas meningkat 15% dibanding tahun lalu.",
+      "content": "Musim panen raya padi periode pertama tahun 2024 di Desa Slorok menunjukkan hasil yang sangat menggembirakan. Total luas lahan yang dipanen mencapai 450 hektar dengan rata-rata produktivitas 6,2 ton per hektar, meningkat 15% dibandingkan periode yang sama tahun lalu. Keberhasilan ini tidak lepas dari program pendampingan teknis dari Penyuluh Pertanian Lapangan (PPL) dan penggunaan benih unggul serta pupuk bersubsidi. Kepala Kelompok Tani menyampaikan rasa syukur dan berharap hasil ini dapat terus dipertahankan pada musim tanam berikutnya. Sebagian hasil panen akan dijual ke Bulog dengan harga yang menguntungkan petani.",
+      "image": "assets/img/desa.jpg?height=300&width=500",
+      "date": "2024-01-08",
+      "author": "Budi Santoso",
+      "category": "Ekonomi"
+    },
+    {
+      "id": 4,
+      "title": "Gotong Royong Pembersihan Sungai Desa",
+      "excerpt": "Seluruh warga bergotong royong membersihkan sungai untuk menjaga kelestarian lingkungan dan mencegah banjir.",
+      "content": "Kegiatan gotong royong pembersihan Sungai Jernih yang melintasi Desa Slorok diikuti oleh lebih dari 200 warga dari berbagai kalangan. Kegiatan yang berlangsung selama sehari penuh ini berhasil mengangkat sampah seberat 2 ton dan membersihkan gulma yang menyumbat aliran sungai. Kepala Desa menekankan pentingnya menjaga kebersihan sungai untuk mencegah banjir saat musim hujan dan melestarikan ekosistem air. Selain pembersihan, warga juga menanam pohon bambu di sepanjang bantaran sungai sebagai upaya konservasi. Kegiatan ini akan dijadikan program rutin setiap 3 bulan sekali dengan melibatkan seluruh elemen masyarakat.",
+      "image": "assets/img/desa.jpg?height=300&width=500",
+      "date": "2024-01-05",
+      "author": "Ahmad Wijaya",
+      "category": "Lingkungan"
+    },
+    {
+      "id": 5,
+      "title": "Launching Website Resmi Desa Slorok",
+      "excerpt": "Desa Slorok resmi meluncurkan website untuk meningkatkan transparansi dan pelayanan kepada masyarakat.",
+      "content": "Dalam rangka meningkatkan transparansi pemerintahan dan kualitas pelayanan publik, Pemerintah Desa Slorok resmi meluncurkan website resmi desa. Website ini menyediakan berbagai informasi mulai dari profil desa, berita terkini, data statistik, hingga layanan online untuk masyarakat. Melalui website ini, warga dapat mengakses informasi APBDes, program-program desa, dan mengajukan permohonan surat-surat secara online. Kepala Desa berharap dengan adanya website ini, komunikasi antara pemerintah desa dan masyarakat menjadi lebih efektif dan transparan. Website dapat diakses 24 jam dan akan terus diperbarui dengan informasi terbaru.",
+      "image": "assets/img/desa.jpg?height=300&width=500",
+      "date": "2024-01-03",
+      "author": "Tim IT Desa",
+      "category": "Pembangunan"
+    },
+    {
+      "id": 6,
+      "title": "Posyandu Balita Raih Penghargaan Terbaik",
+      "excerpt": "Posyandu Melati Desa Slorok meraih penghargaan sebagai posyandu terbaik tingkat kabupaten.",
+      "content": "Posyandu Melati yang berlokasi di Dusun Mawar, Desa Slorok, berhasil meraih penghargaan sebagai Posyandu Terbaik tingkat Kabupaten Sentosa tahun 2024. Penghargaan ini diberikan berdasarkan penilaian terhadap kelengkapan sarana prasarana, keaktifan kader, cakupan pelayanan, dan inovasi program. Posyandu Melati melayani 150 balita dan 80 ibu hamil dengan tingkat partisipasi mencapai 95%. Inovasi yang dikembangkan antara lain program 'Hari Gizi Seimbang' dan 'Kelas Ibu Hamil' yang mendapat apresiasi tinggi dari tim penilai. Kepala Puskesmas menyampaikan bahwa keberhasilan ini menjadi contoh bagi posyandu lain di wilayah kabupaten.",
+      "image": "assets/img/desa.jpg?height=300&width=500",
+      "date": "2024-01-01",
+      "author": "Dr. Sari Indah",
+      "category": "Sosial"
+    }
+  ]
+}

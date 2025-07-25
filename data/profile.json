@@ -1,0 +1,183 @@
+{
+  "profile": {
+    "history": {
+      "title": "Sejarah Desa",
+      "icon": "fas fa-history",
+      "content": [
+        "Desa Slorok, yang berdiri sejak tahun 1881, mendapatkan namanya dari sebuah makam dengan pintu \"slorokan\" yang ditemukan saat pembukaan lahan pertama oleh tujuh pendiri. Desa ini terdiri dari beberapa dusun yang namanya juga memiliki asal-usul unik. Dusun Menjangan Kalung dinamai setelah penampakan gaib seekor menjangan berkalung. Dusun Pucungsari berasal dari nama pohon Pucung, dan Dusun Sumber dinamai karena banyaknya mata air di wilayah tersebut.",
+        "Sepanjang sejarahnya, Desa Slorok memegang peranan penting. Pada era pra-kemerdekaan, wilayah Menjangan Kalung menjadi pangkalan pejuang melawan Jepang. Di zaman Belanda, salah satu rumah di Pucungsari Kidul menjadi markas pejuang dan menerima penghargaan dari Legiun Veteran pada tahun 1987. Desa ini juga menjadi lokasi pemberantasan oknum G30S/PKI. Selain itu, desa mengalami beberapa perubahan signifikan, termasuk pemindahan pasar desa pada tahun 1961 dan pengurangan wilayah pada tahun 1971. Kini, Desa Slorok merupakan bagian dari Kecamatan Garum.",
+        "Tujuh Pendiri Desa Slorok:",
+        "1. Darma Wangsa (Makam di Dusun Menjangankalung)",
+        "2. Raden Subroto (Makam di Dusun Pucungsari Kidul)",
+        "3. Merto Yudho (Makam di Dusun Slorok)",
+        "4. Dewi Dukimat (Makam di Dusun Sumber)",
+        "5. Tunggul Wulung  (Makam di Dusun Sumber)",
+        "6. Belum diketahui",
+        "7. Belum diketahui"
+      ]
+    },
+    "authority": {
+      "title": "Sejarah Kepala Desa",
+      "icon": "fas fa-crown",
+      "members": [
+        {
+          "name": "Kromosonto",
+          "period": "1873-1885",
+          "photo": "assets/img/officer/placeholder.jpg",
+          "description": "Memimpin desa dengan dedikasi tinggi untuk kesejahteraan masyarakat"
+        },
+        {
+          "name": "Diposentono",
+          "period": "1885-1906",
+          "photo": "assets/img/officer/placeholder.jpg",
+          "description": "Mendukung administrasi dan tata kelola desa yang efektif"
+        },
+        {
+          "name": "Kasanrodjo",
+          "period": "1906-1922",
+          "photo": "assets/img/officer/placeholder.jpg",
+          "description": "Bertanggung jawab dalam urusan pemerintahan dan pelayanan publik"
+        },
+        {
+          "name": "Kromowitjono",
+          "period": "1922-1929",
+          "photo": "assets/img/officer/placeholder.jpg",
+          "description": "Mendukung administrasi dan tata kelola desa yang efektif"
+        },
+        {
+          "name": "Kromosentono",
+          "period": "1929-1931",
+          "photo": "assets/img/officer/placeholder.jpg",
+          "description": "Bertanggung jawab dalam urusan pemerintahan dan pelayanan publik"
+        },
+        {
+          "name": "Kartosemito",
+          "period": "1931-1933",
+          "photo": "assets/img/officer/placeholder.jpg",
+          "description": "Mendukung administrasi dan tata kelola desa yang efektif"
+        },
+        {
+          "name": "Sastrosoerono",
+          "period": "1933-1947",
+          "photo": "assets/img/officer/placeholder.jpg",
+          "description": "Bertanggung jawab dalam urusan pemerintahan dan pelayanan publik"
+        },
+        {
+          "name": "Tomopawiro",
+          "period": "1947-1988",
+          "photo": "assets/img/officer/placeholder.jpg",
+          "description": "Bertanggung jawab dalam urusan pemerintahan dan pelayanan publik"
+        },
+        {
+          "name": "Habib Suminto (Pj.)",
+          "period": "1988-1989",
+          "photo": "assets/img/officer/placeholder.jpg",
+          "description": "Mendukung administrasi dan tata kelola desa yang efektif"
+        },
+        {
+          "name": "H. Imam Bachrodin",
+          "period": "1988-1997",
+          "photo": "assets/img/officer/placeholder.jpg",
+          "description": "Bertanggung jawab dalam urusan pemerintahan dan pelayanan publik"
+        },
+        {
+          "name": "JFR. Suyatin (Pj.)",
+          "period": "1997-1998",
+          "photo": "assets/img/officer/placeholder.jpg",
+          "description": "Bertanggung jawab dalam urusan pemerintahan dan pelayanan publik"
+        },
+        {
+          "name": "H. Imam Bachrodin",
+          "period": "1998-2003",
+          "photo": "assets/img/officer/placeholder.jpg",
+          "description": "Mendukung administrasi dan tata kelola desa yang efektif"
+        },
+        {
+          "name": "Muryani (Pj.)",
+          "period": "2003-2007",
+          "photo": "assets/img/officer/placeholder.jpg",
+          "description": "Bertanggung jawab dalam urusan pemerintahan dan pelayanan publik"
+        },
+        {
+          "name": "Zaenal Mustofa, S.Pd.I",
+          "period": "2007-2019",
+          "photo": "assets/img/officer/placeholder.jpg",
+          "description": "Mendukung administrasi dan tata kelola desa yang efektif"
+        },
+        {
+          "name": "Bambang Siswaya, S.T.",
+          "period": "2019-sekarang",
+          "photo": "assets/img/officer/pakBam.jpg",
+          "description": "Bertanggung jawab dalam urusan pemerintahan dan pelayanan publik"
+        }
+      ]
+    },
+    "vision": {
+      "title": "Visi",
+      "icon": "fas fa-eye",
+      "content": "Mewujudkan Desa Slorok sebagai desa yang maju, mandiri, dan sejahtera berdasarkan nilai-nilai gotong royong dan kearifan lokal pada tahun 2030"
+    },
+    "mission": {
+      "title": "Misi",
+      "icon": "fas fa-bullseye",
+      "content": [
+        "Meningkatkan kualitas sumber daya manusia melalui pendidikan dan pelatihan keterampilan",
+        "Mengembangkan potensi ekonomi desa berbasis pertanian dan UMKM",
+        "Membangun infrastruktur desa yang mendukung aktivitas ekonomi dan sosial masyarakat",
+        "Melestarikan lingkungan hidup dan kearifan lokal",
+        "Meningkatkan kualitas pelayanan publik yang transparan dan akuntabel",
+        "Memperkuat nilai-nilai gotong royong dan kebersamaan dalam kehidupan bermasyarakat"
+      ]
+    },
+    "map": {
+      "title": "Peta Wilayah Desa",
+      "icon": "fas fa-map"
+    },
+    "leadership": {
+      "title": "Struktur Pemerintahan Desa",
+      "icon": "fas fa-users-cog",
+      "positions": [
+        {
+          "title": "Kepala Desa",
+          "name": "H. Ahmad Suryanto, S.Sos",
+          "period": "2019-2025"
+        },
+        {
+          "title": "Sekretaris Desa",
+          "name": "Drs. Bambang Wijaya",
+          "period": "2020-2026"
+        },
+        {
+          "title": "Kaur Pemerintahan",
+          "name": "Siti Nurhaliza, S.AP",
+          "period": "2020-2026"
+        },
+        {
+          "title": "Kaur Pembangunan",
+          "name": "Ir. Joko Susilo",
+          "period": "2020-2026"
+        },
+        {
+          "title": "Kaur Kesejahteraan",
+          "name": "Dr. Rina Sari, S.Sos",
+          "period": "2020-2026"
+        },
+        {
+          "title": "Kaur Keuangan",
+          "name": "Andi Pratama, S.E",
+          "period": "2020-2026"
+        },
+        {
+          "title": "Kadus I (Mawar)",
+          "name": "Usman Hakim",
+          "period": "2019-2025"
+        },
+        {
+          "title": "Kadus II (Melati)",
+          "name": "Sari Dewi",
+          "period": "2019-2025"
+        }
+      ]
+    }
+  }
+}

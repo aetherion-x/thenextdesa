@@ -1,0 +1,141 @@
+{
+  "charts": {
+    "demography": {
+      "title": "Demografi Penduduk",
+      "type": "doughnut",
+      "data": {
+        "labels": ["Laki-laki", "Perempuan"],
+        "datasets": [
+          {
+            "data": [1300, 1200],
+            "backgroundColor": ["#2E7D32", "#4CAF50"],
+            "borderWidth": 2
+          }
+        ]
+      },
+      "options": {
+        "responsive": true,
+        "maintainAspectRatio": false,
+        "plugins": {
+          "legend": {
+            "position": "bottom"
+          },
+          "tooltip": {
+            "callbacks": {
+              "label": "function(context) { return context.label + ': ' + context.parsed + ' jiwa (' + Math.round(context.parsed / 2500 * 100) + '%)'; }"
+            }
+          }
+        }
+      }
+    },
+    "education": {
+      "title": "Tingkat Pendidikan",
+      "type": "bar",
+      "data": {
+        "labels": ["SD", "SMP", "SMA", "Diploma", "S1", "S2/S3"],
+        "datasets": [
+          {
+            "label": "Jumlah Penduduk",
+            "data": [800, 600, 450, 150, 200, 50],
+            "backgroundColor": "#1976D2",
+            "borderColor": "#0D47A1",
+            "borderWidth": 1
+          }
+        ]
+      },
+      "options": {
+        "responsive": true,
+        "maintainAspectRatio": false,
+        "plugins": {
+          "legend": {
+            "display": false
+          }
+        },
+        "scales": {
+          "y": {
+            "beginAtZero": true,
+            "ticks": {
+              "callback": "function(value) { return value + ' orang'; }"
+            }
+          }
+        }
+      }
+    },
+    "occupation": {
+      "title": "Mata Pencaharian",
+      "type": "pie",
+      "data": {
+        "labels": ["Petani", "Pedagang", "PNS", "Swasta", "Buruh", "Lainnya"],
+        "datasets": [
+          {
+            "data": [900, 400, 200, 300, 350, 350],
+            "backgroundColor": ["#4CAF50", "#FF9800", "#2196F3", "#9C27B0", "#F44336", "#607D8B"]
+          }
+        ]
+      },
+      "options": {
+        "responsive": true,
+        "maintainAspectRatio": false,
+        "plugins": {
+          "legend": {
+            "position": "right"
+          },
+          "tooltip": {
+            "callbacks": {
+              "label": "function(context) { return context.label + ': ' + context.parsed + ' orang (' + Math.round(context.parsed / 2500 * 100) + '%)'; }"
+            }
+          }
+        }
+      }
+    },
+    "economy": {
+      "title": "Perkembangan Ekonomi",
+      "type": "line",
+      "data": {
+        "labels": ["2019", "2020", "2021", "2022", "2023", "2024"],
+        "datasets": [
+          {
+            "label": "Pendapatan Desa (Juta Rupiah)",
+            "data": [2800, 2650, 2900, 3200, 3500, 3800],
+            "borderColor": "#4CAF50",
+            "backgroundColor": "rgba(76, 175, 80, 0.1)",
+            "tension": 0.4,
+            "fill": true
+          },
+          {
+            "label": "UMKM Aktif",
+            "data": [45, 42, 48, 55, 62, 68],
+            "borderColor": "#FF9800",
+            "backgroundColor": "rgba(255, 152, 0, 0.1)",
+            "tension": 0.4,
+            "fill": true,
+            "yAxisID": "y1"
+          }
+        ]
+      },
+      "options": {
+        "responsive": true,
+        "maintainAspectRatio": false,
+        "interaction": {
+          "mode": "index",
+          "intersect": false
+        },
+        "scales": {
+          "y": {
+            "type": "linear",
+            "display": true,
+            "position": "left"
+          },
+          "y1": {
+            "type": "linear",
+            "display": true,
+            "position": "right",
+            "grid": {
+              "drawOnChartArea": false
+            }
+          }
+        }
+      }
+    }
+  }
+}
