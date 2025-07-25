@@ -3,6 +3,13 @@
 import { useEffect, useState } from "react"
 import { Bar } from "react-chartjs-2"
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js"
+import { 
+  getDemographicData, 
+  subscribeToDemographicData, 
+  initializeDemographicData,
+  DemographicData,
+  JobData as FirebaseJobData
+} from "@/lib/demographic-service"
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
@@ -20,138 +27,65 @@ interface JobDataSet {
 export default function PopulationData() {
   const [filter, setFilter] = useState<"semua" | "laki_laki" | "perempuan">("semua")
   const [jobData, setJobData] = useState<JobDataSet | null>(null)
+  const [demographicData, setDemographicData] = useState<DemographicData | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Data mentah diisi dengan angka acak (random)
-    const rawData = [
-        { pekerjaan: "BELUM/TIDAK BEKERJA", laki: 958, perempuan: 856 },
-        { pekerjaan: "MENGURUS RUMAH TANGGA", laki: 25, perempuan: 1228 },
-        { pekerjaan: "PELAJAR/MAHASISWA", laki: 640, perempuan: 614 },
-        { pekerjaan: "PENSIUNAN", laki: 14, perempuan: 11 },
-        { pekerjaan: "PEGAWAI NEGERI SIPIL (PNS)", laki: 26, perempuan: 19 },
-        { pekerjaan: "TENTARA NASIONAL INDONESIA", laki: 5, perempuan: 0 },
-        { pekerjaan: "KEPOLISIAN RI (POLRI)", laki: 2, perempuan: 0 },
-        { pekerjaan: "PERDAGANGAN", laki: 85, perempuan: 106 },
-        { pekerjaan: "PETANI/PEKEBUN", laki: 532, perempuan: 259 },
-        { pekerjaan: "PETERNAK", laki: 19, perempuan: 3 },
-        { pekerjaan: "NELAYAN/PERIKANAN", laki: 8, perempuan: 4 },
-        { pekerjaan: "INDUSTRI", laki: 13, perempuan: 5 },
-        { pekerjaan: "KONSTRUKSI", laki: 45, perempuan: 2 },
-        { pekerjaan: "TRANSPORTASI", laki: 21, perempuan: 1 },
-        { pekerjaan: "KARYAWAN SWASTA", laki: 798, perempuan: 483 },
-        { pekerjaan: "KARYAWAN BUMN", laki: 9, perempuan: 12 },
-        { pekerjaan: "KARYAWAN BUMD", laki: 4, perempuan: 3 },
-        { pekerjaan: "KARYAWAN HONORER", laki: 12, perempuan: 18 },
-        { pekerjaan: "BURUH HARIAN LEPAS", laki: 265, perempuan: 78 },
-        { pekerjaan: "BURUH TANI/PERKEBUNAN", laki: 362, perempuan: 205 },
-        { pekerjaan: "BURUH NELAYAN/PERIKANAN", laki: 5, perempuan: 2 },
-        { pekerjaan: "BURUH PETERNAKAN", laki: 7, perempuan: 13 },
-        { pekerjaan: "PEMBANTU RUMAH TANGGA", laki: 3, perempuan: 38 },
-        { pekerjaan: "TUKANG CUKUR", laki: 15, perempuan: 2 },
-        { pekerjaan: "TUKANG LISTRIK", laki: 9, perempuan: 0 },
-        { pekerjaan: "TUKANG BATU", laki: 24, perempuan: 0 },
-        { pekerjaan: "TUKANG KAYU", laki: 13, perempuan: 0 },
-        { pekerjaan: "TUKANG SOL SEPATU", laki: 5, perempuan: 0 },
-        { pekerjaan: "TUKANG LAS/PANDAI BESI", laki: 11, perempuan: 0 },
-        { pekerjaan: "TUKANG JAHIT", laki: 2, perempuan: 16 },
-        { pekerjaan: "TUKANG GIGI", laki: 1, perempuan: 1 },
-        { pekerjaan: "PENATA RIAS", laki: 1, perempuan: 12 },
-        { pekerjaan: "PENATA BUSANA", laki: 0, perempuan: 5 },
-        { pekerjaan: "PENATA RAMBUT", laki: 2, perempuan: 8 },
-        { pekerjaan: "MEKANIK", laki: 18, perempuan: 0 },
-        { pekerjaan: "SENIMAN", laki: 4, perempuan: 3 },
-        { pekerjaan: "TABIB", laki: 2, perempuan: 3 },
-        { pekerjaan: "PARAJI", laki: 0, perempuan: 5 },
-        { pekerjaan: "PERANCANG BUSANA", laki: 1, perempuan: 4 },
-        { pekerjaan: "PENTERJEMAH", laki: 2, perempuan: 2 },
-        { pekerjaan: "IMAM MASJID", laki: 3, perempuan: 0 },
-        { pekerjaan: "PENDETA", laki: 1, perempuan: 0 },
-        { pekerjaan: "PASTOR", laki: 1, perempuan: 0 },
-        { pekerjaan: "WARTAWAN", laki: 3, perempuan: 2 },
-        { pekerjaan: "USTADZ/MUBALIGH", laki: 5, perempuan: 1 },
-        { pekerjaan: "JURU MASAK", laki: 2, perempuan: 15 },
-        { pekerjaan: "PROMOTOR ACARA", laki: 1, perempuan: 1 },
-        { pekerjaan: "ANGGOTA DPR RI", laki: 0, perempuan: 0 },
-        { pekerjaan: "ANGGOTA DPD RI", laki: 0, perempuan: 0 },
-        { pekerjaan: "ANGGOTA BPK", laki: 0, perempuan: 0 },
-        { pekerjaan: "PRESIDEN", laki: 0, perempuan: 0 },
-        { pekerjaan: "WAKIL PRESIDEN", laki: 0, perempuan: 0 },
-        { pekerjaan: "ANGGOTA MAHKAMAH KONSTITUSI", laki: 0, perempuan: 0 },
-        { pekerjaan: "ANGGOTA KABINET KEMENTRIAN", laki: 0, perempuan: 0 },
-        { pekerjaan: "DUTA BESAR", laki: 0, perempuan: 0 },
-        { pekerjaan: "GUBERNUR", laki: 0, perempuan: 0 },
-        { pekerjaan: "WAKIL GUBERNUR", laki: 0, perempuan: 0 },
-        { pekerjaan: "BUPATI", laki: 1, perempuan: 0 },
-        { pekerjaan: "WAKIL BUPATI", laki: 1, perempuan: 0 },
-        { pekerjaan: "WALIKOTA", laki: 0, perempuan: 0 },
-        { pekerjaan: "WAKIL WALIKOTA", laki: 0, perempuan: 0 },
-        { pekerjaan: "ANGGOTA DPRD PROP.", laki: 2, perempuan: 1 },
-        { pekerjaan: "ANGGOTA DPRD KAB./KOT.", laki: 3, perempuan: 2 },
-        { pekerjaan: "DOSEN", laki: 15, perempuan: 18 },
-        { pekerjaan: "GURU", laki: 24, perempuan: 40 },
-        { pekerjaan: "PILOT", laki: 3, perempuan: 0 },
-        { pekerjaan: "PENGACARA", laki: 5, perempuan: 2 },
-        { pekerjaan: "NOTARIS", laki: 3, perempuan: 4 },
-        { pekerjaan: "ARSITEK", laki: 4, perempuan: 3 },
-        { pekerjaan: "AKUNTAN", laki: 6, perempuan: 7 },
-        { pekerjaan: "KONSULTAN", laki: 8, perempuan: 5 },
-        { pekerjaan: "DOKTER", laki: 10, perempuan: 12 },
-        { pekerjaan: "BIDAN", laki: 0, perempuan: 15 },
-        { pekerjaan: "PERAWAT", laki: 7, perempuan: 21 },
-        { pekerjaan: "APOTEKER", laki: 2, perempuan: 8 },
-        { pekerjaan: "PSIKIATER/PSIKOLOG", laki: 1, perempuan: 3 },
-        { pekerjaan: "PENYIAR TELEVISI", laki: 2, perempuan: 3 },
-        { pekerjaan: "PENYIAR RADIO", laki: 4, perempuan: 4 },
-        { pekerjaan: "PELAUT", laki: 22, perempuan: 1 },
-        { pekerjaan: "PENELITI", laki: 5, perempuan: 6 },
-        { pekerjaan: "SOPIR", laki: 55, perempuan: 1 },
-        { pekerjaan: "PIALANG", laki: 3, perempuan: 2 },
-        { pekerjaan: "PARANORMAL", laki: 2, perempuan: 1 },
-        { pekerjaan: "PEDAGANG", laki: 150, perempuan: 104 },
-        { pekerjaan: "PERANGKAT DESA", laki: 8, perempuan: 3 },
-        { pekerjaan: "KEPALA DESA", laki: 1, perempuan: 0 },
-        { pekerjaan: "BIARAWAN/BIARAWATI", laki: 1, perempuan: 3 },
-        { pekerjaan: "WIRASWASTA", laki: 330, perempuan: 203 },
-        { pekerjaan: "ANGGOTA LEMB. TINGGI LAINNYA", laki: 2, perempuan: 0 },
-        { pekerjaan: "ARTIS", laki: 1, perempuan: 2 },
-        { pekerjaan: "ATLIT", laki: 5, perempuan: 3 },
-        { pekerjaan: "CHEFF", laki: 4, perempuan: 6 },
-        { pekerjaan: "MANAJER", laki: 12, perempuan: 9 },
-        { pekerjaan: "TENAGA TATA USAHA", laki: 8, perempuan: 15 },
-        { pekerjaan: "OPERATOR", laki: 25, perempuan: 10 },
-        { pekerjaan: "PEKERJA PENGOLAHAN KERAJINAN", laki: 10, perempuan: 25 },
-        { pekerjaan: "TEKNISI", laki: 30, perempuan: 5 },
-        { pekerjaan: "ASISTEN AHLI", laki: 7, perempuan: 10 },
-        { pekerjaan: "PEKERJAAN LAINNYA", laki: 50, perempuan: 45 },
-    ];
+    let unsubscribe: (() => void) | null = null;
 
-    // Memproses data untuk setiap kategori
-    const newJobData: JobDataSet = {
-      semua: rawData
-        .map(item => ({
-          jenis: item.pekerjaan,
-          jumlah: item.laki + item.perempuan,
-        }))
-        .filter(item => item.jumlah > 0), // Filter pekerjaan dengan jumlah > 0
-      laki_laki: rawData
-        .map(item => ({
-          jenis: item.pekerjaan,
-          jumlah: item.laki,
-        }))
-        .filter(item => item.jumlah > 0), // Filter pekerjaan dengan jumlah > 0
-      perempuan: rawData
-        .map(item => ({
-          jenis: item.pekerjaan,
-          jumlah: item.perempuan,
-        }))
-        .filter(item => item.jumlah > 0), // Filter pekerjaan dengan jumlah > 0
+    const initAndSubscribe = async () => {
+      try {
+        // Inisialisasi data jika belum ada
+        await initializeDemographicData();
+
+        // Subscribe untuk real-time updates
+        unsubscribe = subscribeToDemographicData((data) => {
+          setDemographicData(data);
+          
+          if (data && data.jobs) {
+            // Memproses data untuk setiap kategori
+            const newJobData: JobDataSet = {
+              semua: data.jobs
+                .map(item => ({
+                  jenis: item.pekerjaan,
+                  jumlah: item.laki + item.perempuan,
+                }))
+                .filter(item => item.jumlah > 0),
+              laki_laki: data.jobs
+                .map(item => ({
+                  jenis: item.pekerjaan,
+                  jumlah: item.laki,
+                }))
+                .filter(item => item.jumlah > 0),
+              perempuan: data.jobs
+                .map(item => ({
+                  jenis: item.pekerjaan,
+                  jumlah: item.perempuan,
+                }))
+                .filter(item => item.jumlah > 0),
+            };
+            
+            setJobData(newJobData);
+          }
+          setLoading(false);
+        });
+      } catch (error) {
+        console.error('Error initializing data:', error);
+        setLoading(false);
+      }
     };
-    
-    setJobData(newJobData);
+
+    initAndSubscribe();
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, []);
 
   const educationData = {
-    labels: [
+    labels: demographicData?.education?.map(edu => edu.level) || [
       "Tidak/Belum Sekolah",
       "Belum Tamat SD/Sederajat",
       "Tamat SD/Sederajat",
@@ -166,7 +100,7 @@ export default function PopulationData() {
     datasets: [
       {
         label: "Jumlah Penduduk",
-        data: [173, 201, 285, 140, 286, 22, 13, 26, 2, 0],
+        data: demographicData?.education?.map(edu => edu.count) || [173, 201, 285, 140, 286, 22, 13, 26, 2, 0],
         backgroundColor: "#ff6b35",
         borderRadius: 5,
       },
@@ -190,6 +124,17 @@ export default function PopulationData() {
   // Ambil 6 pekerjaan teratas untuk ditampilkan dalam kartu
   const top6Jobs = sortedJobData.slice(0, 6);
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Memuat data kependudukan...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* Population Summary */}
@@ -207,7 +152,9 @@ export default function PopulationData() {
                 <p className="text-base font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Total Penduduk
                 </p>
-                <p className="text-4xl font-bold text-black dark:text-white">8,598 Jiwa</p>
+                <p className="text-4xl font-bold text-black dark:text-white">
+                  {demographicData?.population?.total?.toLocaleString("id-ID") || "0"} Jiwa
+                </p>
               </div>
             </div>
             <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg flex items-center space-x-6">
@@ -218,7 +165,9 @@ export default function PopulationData() {
                 <p className="text-base font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Perempuan
                 </p>
-                <p className="text-4xl font-bold text-black dark:text-white">4,281 Jiwa</p>
+                <p className="text-4xl font-bold text-black dark:text-white">
+                  {demographicData?.population?.female?.toLocaleString("id-ID") || "0"} Jiwa
+                </p>
               </div>
             </div>
             <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg flex items-center space-x-6">
@@ -229,7 +178,9 @@ export default function PopulationData() {
                 <p className="text-base font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Laki-laki
                 </p>
-                <p className="text-4xl font-bold text-black dark:text-white">4,317 Jiwa</p>
+                <p className="text-4xl font-bold text-black dark:text-white">
+                  {demographicData?.population?.male?.toLocaleString("id-ID") || "0"} Jiwa
+                </p>
               </div>
             </div>
           </div>
@@ -243,7 +194,7 @@ export default function PopulationData() {
             <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">Statistik Berdasarkan Agama</h2>
           </div>
           {(() => {
-            const religions = [
+            const religions = demographicData?.religions || [
               { name: "Islam", count: 8285, icon: "fas fa-mosque" },
               { name: "Kristen", count: 22, icon: "fas fa-church" },
               { name: "Katolik", count: 268, icon: "fas fa-bible" },
