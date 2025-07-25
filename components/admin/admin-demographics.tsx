@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Save, RefreshCw } from "lucide-react";
 import SuccessAlert from "@/components/ui/success-alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   getDemographicData, 
   updatePopulationData, 
@@ -26,6 +27,8 @@ export default function AdminDemographics() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("population");
+  const [selectedJobIndex, setSelectedJobIndex] = useState<number | null>(null);
+  const [jobSearchQuery, setJobSearchQuery] = useState("");
 
   // Success state untuk setiap tab
   const [successMessages, setSuccessMessages] = useState({
@@ -172,8 +175,10 @@ export default function AdminDemographics() {
     // Clear success message when user starts editing
     setSuccessMessages(prev => ({ ...prev, jobs: false }));
     const newJobs = [...editJobs];
-    newJobs[index] = { ...newJobs[index], [field]: value };
-    setEditJobs(newJobs);
+    if (newJobs[index]) {
+      newJobs[index] = { ...newJobs[index], [field]: value };
+      setEditJobs(newJobs);
+    }
   };
 
   const updateEducation = (index: number, field: keyof EducationData, value: string | number) => {
@@ -338,46 +343,144 @@ export default function AdminDemographics() {
             <CardHeader>
               <CardTitle>Data Pekerjaan</CardTitle>
               <CardDescription>
-                Kelola data penduduk berdasarkan jenis pekerjaan
+                Kelola data penduduk berdasarkan jenis pekerjaan - Pilih jenis pekerjaan untuk edit
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <SuccessAlert show={successMessages.jobs} />
-              <div className="max-h-96 overflow-y-auto space-y-4">
-                {editJobs.map((job, index) => (
-                  <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-lg">
-                    <div>
-                      <Label htmlFor={`job-name-${index}`}>Jenis Pekerjaan</Label>
-                      <Input
-                        id={`job-name-${index}`}
-                        value={job.pekerjaan}
-                        onChange={(e) => updateJob(index, 'pekerjaan', e.target.value)}
-                        disabled
-                        className="bg-gray-100 dark:bg-gray-800"
+              
+              {/* Dropdown untuk memilih jenis pekerjaan */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="job-search">Cari dan Pilih Jenis Pekerjaan</Label>
+                  <Input
+                    id="job-search"
+                    placeholder="Ketik untuk mencari pekerjaan... (contoh: petani, guru, dll)"
+                    value={jobSearchQuery}
+                    onChange={(e) => {
+                      setJobSearchQuery(e.target.value);
+                      setSelectedJobIndex(null); // Reset selection when searching
+                    }}
+                    className="mb-2"
+                  />
+                  <Select
+                    value={selectedJobIndex !== null ? selectedJobIndex.toString() : ""}
+                    onValueChange={(value) => {
+                      setSelectedJobIndex(parseInt(value));
+                      // Clear success message when user starts selecting
+                      setSuccessMessages(prev => ({ ...prev, jobs: false }));
+                    }}
+                  >
+                    <SelectTrigger 
+                      className="w-full border border-gray-300 dark:border-gray-600"
+                      style={{ 
+                        backgroundColor: 'white',
+                        color: '#1f2937'
+                      }}
+                    >
+                      <SelectValue 
+                        placeholder="Pilih jenis pekerjaan untuk diedit..." 
+                        style={{ color: '#1f2937' }}
                       />
-                    </div>
-                    <div>
-                      <Label htmlFor={`job-male-${index}`}>Laki-laki</Label>
-                      <Input
-                        id={`job-male-${index}`}
-                        type="number"
-                        value={job.laki}
-                        onChange={(e) => updateJob(index, 'laki', parseInt(e.target.value) || 0)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor={`job-female-${index}`}>Perempuan</Label>
-                      <Input
-                        id={`job-female-${index}`}
-                        type="number"
-                        value={job.perempuan}
-                        onChange={(e) => updateJob(index, 'perempuan', parseInt(e.target.value) || 0)}
-                      />
+                    </SelectTrigger>
+                    <SelectContent 
+                      className="max-h-60 border border-gray-200 dark:border-gray-700 shadow-lg z-50"
+                      style={{
+                        backgroundColor: 'white',
+                        color: '#1f2937'
+                      }}
+                    >
+                      {editJobs
+                        .map((job, index) => ({ ...job, originalIndex: index }))
+                        .filter(job => 
+                          job.pekerjaan.toLowerCase().includes(jobSearchQuery.toLowerCase())
+                        )
+                        .map((job, filteredIndex) => (
+                        <SelectItem 
+                          key={job.originalIndex} 
+                          value={job.originalIndex.toString()}
+                          className="cursor-pointer px-3 py-2 hover:bg-gray-100"
+                          style={{
+                            backgroundColor: 'white',
+                            color: '#1f2937'
+                          }}
+                        >
+                          <div className="flex justify-between items-center w-full" style={{ color: '#1f2937' }}>
+                            <span className="truncate max-w-xs font-medium" style={{ color: '#1f2937' }}>
+                              {job.pekerjaan}
+                            </span>
+                            <span className="text-sm ml-2 font-normal" style={{ color: '#6b7280' }}>
+                              L: {job.laki} | P: {job.perempuan} | Total: {(job.laki + job.perempuan).toLocaleString('id-ID')}
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                      {editJobs.filter(job => 
+                          job.pekerjaan.toLowerCase().includes(jobSearchQuery.toLowerCase())
+                        ).length === 0 && jobSearchQuery && (
+                        <div 
+                          className="p-3 text-center"
+                          style={{ 
+                            backgroundColor: 'white',
+                            color: '#6b7280'
+                          }}
+                        >
+                          Tidak ada pekerjaan yang cocok dengan "{jobSearchQuery}"
+                        </div>
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-sm text-gray-500">
+                    Total: {editJobs.length} jenis pekerjaan tersedia
+                  </p>
+                </div>
+
+                {/* Form edit untuk pekerjaan yang dipilih */}
+                {selectedJobIndex !== null && (
+                  <div className="p-4 border rounded-lg bg-gray-50 dark:bg-gray-900">
+                    <div className="space-y-4">
+                      <div>
+                        <Label>Jenis Pekerjaan</Label>
+                        <div className="p-3 bg-white dark:bg-gray-800 border rounded-md">
+                          <span className="font-medium">{editJobs[selectedJobIndex]?.pekerjaan}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="job-male">Jumlah Laki-laki</Label>
+                          <Input
+                            id="job-male"
+                            type="number"
+                            value={editJobs[selectedJobIndex]?.laki || 0}
+                            onChange={(e) => updateJob(selectedJobIndex, 'laki', parseInt(e.target.value) || 0)}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="job-female">Jumlah Perempuan</Label>
+                          <Input
+                            id="job-female"
+                            type="number"
+                            value={editJobs[selectedJobIndex]?.perempuan || 0}
+                            onChange={(e) => updateJob(selectedJobIndex, 'perempuan', parseInt(e.target.value) || 0)}
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">Total:</span>
+                          <span className="text-lg font-bold text-blue-600">
+                            {((editJobs[selectedJobIndex]?.laki || 0) + (editJobs[selectedJobIndex]?.perempuan || 0)).toLocaleString('id-ID')} orang
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                ))}
+                )}
               </div>
-              <Button onClick={handleSaveJobs} disabled={saving}>
+
+              <Button onClick={handleSaveJobs} disabled={saving || selectedJobIndex === null}>
                 <Save className="w-4 h-4 mr-2" />
                 {saving ? "Menyimpan..." : "Simpan Data Pekerjaan"}
               </Button>
