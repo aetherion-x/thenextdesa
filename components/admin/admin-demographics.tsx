@@ -55,6 +55,14 @@ export default function AdminDemographics() {
   const loadData = async () => {
     try {
       setLoading(true);
+      // Clear all success messages when refreshing
+      setSuccessMessages({
+        population: false,
+        religion: false,
+        jobs: false,
+        education: false,
+      });
+      
       const data = await getDemographicData();
       if (data) {
         setDemographicData(data);
@@ -231,7 +239,20 @@ export default function AdminDemographics() {
         </div>
       )}
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs 
+        value={activeTab} 
+        onValueChange={(value) => {
+          setActiveTab(value);
+          // Optional: Clear success messages when switching tabs for cleaner UI
+          // setSuccessMessages({
+          //   population: false,
+          //   religion: false,
+          //   jobs: false,
+          //   education: false,
+          // });
+        }} 
+        className="w-full"
+      >
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="population">Data Populasi</TabsTrigger>
           <TabsTrigger value="religion">Data Agama</TabsTrigger>
