@@ -5,32 +5,39 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Save, RefreshCw } from "lucide-react";
-import SuccessAlert from "@/components/ui/success-alert";
+import { ArrowLeft, Save, RefreshCw } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
-  getDemographicData, 
-  updatePopulationData, 
-  updateReligionData, 
-  updateJobData, 
+  getPopulationData,
+  getReligionsData,
+  getJobsData,
+  getEducationData,
+  updatePopulationData,
+  updateReligionsData,
+  updateJobsData,
   updateEducationData,
-  DemographicData,
+  subscribeToPopulationData,
+  subscribeToReligionsData,
+  subscribeToJobsData,
+  subscribeToEducationData,
   PopulationData,
   ReligionData,
   JobData,
-  EducationData
+  EducationData,
+  initializeDemographicData
 } from "@/lib/demographic-service";
-import { toast } from "@/hooks/use-toast";
 
-export default function AdminDemographics() {
-  const [demographicData, setDemographicData] = useState<DemographicData | null>(null);
+interface AdminDemographicsProps {
+  onBack: () => void;
+}
+
+export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
+  const [populationData, setPopulationData] = useState<PopulationData | null>(null);
+  const [religionsData, setReligionsData] = useState<ReligionData[]>([]);
+  const [jobsData, setJobsData] = useState<JobData[]>([]);
+  const [educationData, setEducationData] = useState<EducationData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("population");
-  const [selectedJobIndex, setSelectedJobIndex] = useState<number | null>(null);
-  const [jobSearchQuery, setJobSearchQuery] = useState("");
-
-  // Success state untuk setiap tab
   const [successMessages, setSuccessMessages] = useState({
     population: false,
     religion: false,
@@ -38,24 +45,26 @@ export default function AdminDemographics() {
     education: false,
   });
 
-  // Local state untuk editing
-  const [editPopulation, setEditPopulation] = useState<{ male: number; female: number }>({
-    male: 0,
-    female: 0
-  });
-  
-  const [editReligions, setEditReligions] = useState<ReligionData[]>([]);
-  const [editJobs, setEditJobs] = useState<JobData[]>([]);
-  const [editEducation, setEditEducation] = useState<EducationData[]>([]);
-
   useEffect(() => {
     loadData();
+    
+    // Subscribe to real-time updates
+    const unsubscribePopulation = subscribeToPopulationData(setPopulationData);
+    const unsubscribeReligions = subscribeToReligionsData(setReligionsData);
+    const unsubscribeJobs = subscribeToJobsData(setJobsData);
+    const unsubscribeEducation = subscribeToEducationData(setEducationData);
+
+    return () => {
+      unsubscribePopulation();
+      unsubscribeReligions();
+      unsubscribeJobs();
+      unsubscribeEducation();
+    };
   }, []);
 
   const loadData = async () => {
     try {
       setLoading(true);
-      // Clear all success messages when refreshing
       setSuccessMessages({
         population: false,
         religion: false,
@@ -63,257 +72,204 @@ export default function AdminDemographics() {
         education: false,
       });
       
-      const data = await getDemographicData();
-      if (data) {
-        setDemographicData(data);
-        setEditPopulation({ male: data.population.male, female: data.population.female });
-        setEditReligions([...data.religions]);
-        setEditJobs([...data.jobs]);
-        setEditEducation([...data.education]);
+      const [population, religions, jobs, education] = await Promise.all([
+        getPopulationData(),
+        getReligionsData(),
+        getJobsData(),
+        getEducationData()
+      ]);
+
+      setPopulationData(population);
+      setReligionsData(religions);
+      setJobsData(jobs);
+      setEducationData(education);
+
+      // Initialize if no data exists
+      if (!population && religions.length === 0 && jobs.length === 0 && education.length === 0) {
+        await initializeDemographicData();
       }
     } catch (error) {
-      console.error('Error loading data:', error);
-      toast({
-        title: "Error",
-        description: "Gagal memuat data kependudukan",
-        variant: "destructive",
-      });
+      console.error('Error loading demographic data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSavePopulation = async () => {
+  const handlePopulationSave = async () => {
+    if (!populationData) return;
+    
     try {
-      setSaving(true);
-      // Clear success message
-      setSuccessMessages(prev => ({ ...prev, population: false }));
-      
-      const success = await updatePopulationData(editPopulation.male, editPopulation.female);
+      const success = await updatePopulationData(populationData.male, populationData.female);
       if (success) {
         setSuccessMessages(prev => ({ ...prev, population: true }));
-        // Data akan update otomatis melalui real-time listener
-      } else {
-        throw new Error("Failed to save");
+        setTimeout(() => setSuccessMessages(prev => ({ ...prev, population: false })), 3000);
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Gagal menyimpan data populasi",
-        variant: "destructive",
-      });
-    } finally {
-      setSaving(false);
+      console.error('Error saving population data:', error);
     }
   };
 
-  const handleSaveReligions = async () => {
+  const handleReligionSave = async () => {
     try {
-      setSaving(true);
-      // Clear success message
-      setSuccessMessages(prev => ({ ...prev, religion: false }));
-      
-      const success = await updateReligionData(editReligions);
+      const success = await updateReligionsData(religionsData);
       if (success) {
         setSuccessMessages(prev => ({ ...prev, religion: true }));
-        // Data akan update otomatis melalui real-time listener
-      } else {
-        throw new Error("Failed to save");
+        setTimeout(() => setSuccessMessages(prev => ({ ...prev, religion: false })), 3000);
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Gagal menyimpan data agama",
-        variant: "destructive",
-      });
-    } finally {
-      setSaving(false);
+      console.error('Error saving religion data:', error);
     }
   };
 
-  const handleSaveJobs = async () => {
+  const handleJobSave = async () => {
     try {
-      setSaving(true);
-      // Clear success message
-      setSuccessMessages(prev => ({ ...prev, jobs: false }));
-      
-      const success = await updateJobData(editJobs);
+      const success = await updateJobsData(jobsData);
       if (success) {
         setSuccessMessages(prev => ({ ...prev, jobs: true }));
-        // Data akan update otomatis melalui real-time listener
-      } else {
-        throw new Error("Failed to save");
+        setTimeout(() => setSuccessMessages(prev => ({ ...prev, jobs: false })), 3000);
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Gagal menyimpan data pekerjaan",
-        variant: "destructive",
-      });
-    } finally {
-      setSaving(false);
+      console.error('Error saving job data:', error);
     }
   };
 
-  const handleSaveEducation = async () => {
+  const handleEducationSave = async () => {
     try {
-      setSaving(true);
-      // Clear success message
-      setSuccessMessages(prev => ({ ...prev, education: false }));
-      
-      const success = await updateEducationData(editEducation);
+      const success = await updateEducationData(educationData);
       if (success) {
         setSuccessMessages(prev => ({ ...prev, education: true }));
-        // Data akan update otomatis melalui real-time listener
-      } else {
-        throw new Error("Failed to save");
+        setTimeout(() => setSuccessMessages(prev => ({ ...prev, education: false })), 3000);
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Gagal menyimpan data pendidikan",
-        variant: "destructive",
-      });
-    } finally {
-      setSaving(false);
+      console.error('Error saving education data:', error);
     }
   };
 
-  const updateJob = (index: number, field: keyof JobData, value: string | number) => {
-    // Clear success message when user starts editing
-    setSuccessMessages(prev => ({ ...prev, jobs: false }));
-    const newJobs = [...editJobs];
-    if (newJobs[index]) {
-      newJobs[index] = { ...newJobs[index], [field]: value };
-      setEditJobs(newJobs);
-    }
-  };
-
-  const updateEducation = (index: number, field: keyof EducationData, value: string | number) => {
-    // Clear success message when user starts editing
-    setSuccessMessages(prev => ({ ...prev, education: false }));
-    const newEducation = [...editEducation];
-    newEducation[index] = { ...newEducation[index], [field]: value };
-    setEditEducation(newEducation);
+  const updatePopulation = (field: keyof PopulationData, value: number) => {
+    if (!populationData) return;
+    
+    setPopulationData({
+      ...populationData,
+      [field]: value,
+      total: field === 'male' ? value + populationData.female : populationData.male + value
+    });
   };
 
   const updateReligion = (index: number, field: keyof ReligionData, value: string | number) => {
-    // Clear success message when user starts editing
-    setSuccessMessages(prev => ({ ...prev, religion: false }));
-    const newReligions = [...editReligions];
-    newReligions[index] = { ...newReligions[index], [field]: value };
-    setEditReligions(newReligions);
+    const updated = [...religionsData];
+    updated[index] = { ...updated[index], [field]: value };
+    setReligionsData(updated);
+  };
+
+  const updateJob = (index: number, field: keyof JobData, value: string | number) => {
+    const updated = [...jobsData];
+    updated[index] = { ...updated[index], [field]: value };
+    setJobsData(updated);
+  };
+
+  const updateEducation = (index: number, field: keyof EducationData, value: string | number) => {
+    const updated = [...educationData];
+    updated[index] = { ...updated[index], [field]: value };
+    setEducationData(updated);
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <RefreshCw className="animate-spin h-8 w-8 mx-auto mb-4" />
-          <p>Memuat data...</p>
-        </div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="max-w-7xl mx-auto p-6">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard Admin - Data Kependudukan</h1>
-          <p className="text-muted-foreground">
-            Kelola data kependudukan desa
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Kependudukan</h1>
+          <p className="text-gray-600 dark:text-gray-400">Kelola data demografis desa</p>
         </div>
-        <Button onClick={loadData} variant="outline">
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Refresh
-        </Button>
+        <div className="flex gap-3">
+          <Button onClick={loadData} variant="outline">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Refresh
+          </Button>
+          <Button onClick={onBack} variant="outline">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Kembali
+          </Button>
+        </div>
       </div>
-
-      {demographicData && (
-        <div className="mb-4">
-          <Badge variant="secondary">
-            Terakhir diperbarui: {demographicData.lastUpdated.toLocaleString('id-ID')}
-          </Badge>
-        </div>
-      )}
 
       <Tabs 
         value={activeTab} 
         onValueChange={(value) => {
           setActiveTab(value);
-          // Optional: Clear success messages when switching tabs for cleaner UI
-          // setSuccessMessages({
-          //   population: false,
-          //   religion: false,
-          //   jobs: false,
-          //   education: false,
-          // });
         }} 
         className="w-full"
       >
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="population">Data Populasi</TabsTrigger>
-          <TabsTrigger value="religion">Data Agama</TabsTrigger>
-          <TabsTrigger value="jobs">Data Pekerjaan</TabsTrigger>
-          <TabsTrigger value="education">Data Pendidikan</TabsTrigger>
+          <TabsTrigger value="population">Populasi</TabsTrigger>
+          <TabsTrigger value="religion">Agama</TabsTrigger>
+          <TabsTrigger value="jobs">Pekerjaan</TabsTrigger>
+          <TabsTrigger value="education">Pendidikan</TabsTrigger>
         </TabsList>
 
         <TabsContent value="population">
           <Card>
             <CardHeader>
-              <CardTitle>Data Populasi</CardTitle>
-              <CardDescription>
-                Kelola data jumlah penduduk berdasarkan jenis kelamin
-              </CardDescription>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Data Populasi</CardTitle>
+                  <CardDescription>Kelola data jumlah penduduk berdasarkan jenis kelamin</CardDescription>
+                </div>
+                <Button onClick={handlePopulationSave} className="bg-green-600 hover:bg-green-700">
+                  <Save className="w-4 h-4 mr-2" />
+                  Simpan
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <SuccessAlert show={successMessages.population} />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="male">Laki-laki</Label>
-                  <Input
-                    id="male"
-                    type="number"
-                    value={editPopulation.male}
-                    onChange={(e) => {
-                      // Clear success message when user starts editing
-                      setSuccessMessages(prev => ({ ...prev, population: false }));
-                      setEditPopulation({
-                        ...editPopulation,
-                        male: parseInt(e.target.value) || 0
-                      });
-                    }}
-                  />
+              {successMessages.population && (
+                <div className="p-3 bg-green-100 dark:bg-green-900 border border-green-300 dark:border-green-700 rounded-lg">
+                  <p className="text-green-800 dark:text-green-200 flex items-center">
+                    <span className="mr-2">✓</span>
+                    Data populasi berhasil disimpan!
+                  </p>
                 </div>
-                <div>
-                  <Label htmlFor="female">Perempuan</Label>
-                  <Input
-                    id="female"
-                    type="number"
-                    value={editPopulation.female}
-                    onChange={(e) => {
-                      // Clear success message when user starts editing
-                      setSuccessMessages(prev => ({ ...prev, population: false }));
-                      setEditPopulation({
-                        ...editPopulation,
-                        female: parseInt(e.target.value) || 0
-                      });
-                    }}
-                  />
+              )}
+              
+              {populationData && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="male">Laki-laki</Label>
+                    <Input
+                      id="male"
+                      type="number"
+                      value={populationData.male}
+                      onChange={(e) => updatePopulation('male', parseInt(e.target.value) || 0)}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="female">Perempuan</Label>
+                    <Input
+                      id="female"
+                      type="number"
+                      value={populationData.female}
+                      onChange={(e) => updatePopulation('female', parseInt(e.target.value) || 0)}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label>Total</Label>
+                    <Input
+                      value={populationData.total}
+                      disabled
+                      className="mt-1 bg-gray-100 dark:bg-gray-800"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <Label>Total Penduduk (Otomatis)</Label>
-                <p className="text-2xl font-bold text-blue-600">
-                  {(editPopulation.male + editPopulation.female).toLocaleString('id-ID')} Jiwa
-                </p>
-              </div>
-              <Button onClick={handleSavePopulation} disabled={saving}>
-                <Save className="w-4 h-4 mr-2" />
-                {saving ? "Menyimpan..." : "Simpan Data Populasi"}
-              </Button>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -321,40 +277,62 @@ export default function AdminDemographics() {
         <TabsContent value="religion">
           <Card>
             <CardHeader>
-              <CardTitle>Data Agama</CardTitle>
-              <CardDescription>
-                Kelola data penduduk berdasarkan agama
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <SuccessAlert show={successMessages.religion} />
-              {editReligions.map((religion, index) => (
-                <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border rounded-lg">
-                  <div>
-                    <Label htmlFor={`religion-name-${index}`}>Nama Agama</Label>
-                    <Input
-                      id={`religion-name-${index}`}
-                      value={religion.name}
-                      onChange={(e) => updateReligion(index, 'name', e.target.value)}
-                      disabled
-                      className="bg-gray-100 dark:bg-gray-800"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`religion-count-${index}`}>Jumlah</Label>
-                    <Input
-                      id={`religion-count-${index}`}
-                      type="number"
-                      value={religion.count}
-                      onChange={(e) => updateReligion(index, 'count', parseInt(e.target.value) || 0)}
-                    />
-                  </div>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Data Agama</CardTitle>
+                  <CardDescription>Kelola data penduduk berdasarkan agama</CardDescription>
                 </div>
-              ))}
-              <Button onClick={handleSaveReligions} disabled={saving}>
-                <Save className="w-4 h-4 mr-2" />
-                {saving ? "Menyimpan..." : "Simpan Data Agama"}
-              </Button>
+                <Button onClick={handleReligionSave} className="bg-green-600 hover:bg-green-700">
+                  <Save className="w-4 h-4 mr-2" />
+                  Simpan
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {successMessages.religion && (
+                <div className="mb-4 p-3 bg-green-100 dark:bg-green-900 border border-green-300 dark:border-green-700 rounded-lg">
+                  <p className="text-green-800 dark:text-green-200 flex items-center">
+                    <span className="mr-2">✓</span>
+                    Data agama berhasil disimpan!
+                  </p>
+                </div>
+              )}
+              
+              <div className="grid gap-4">
+                {religionsData.map((religion, index) => (
+                  <div key={religion.id} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-lg">
+                    <div>
+                      <Label htmlFor={`religion-name-${index}`}>Nama Agama</Label>
+                      <Input
+                        id={`religion-name-${index}`}
+                        value={religion.name}
+                        onChange={(e) => updateReligion(index, 'name', e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`religion-count-${index}`}>Jumlah</Label>
+                      <Input
+                        id={`religion-count-${index}`}
+                        type="number"
+                        value={religion.count}
+                        onChange={(e) => updateReligion(index, 'count', parseInt(e.target.value) || 0)}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`religion-icon-${index}`}>Icon</Label>
+                      <Input
+                        id={`religion-icon-${index}`}
+                        value={religion.icon}
+                        onChange={(e) => updateReligion(index, 'icon', e.target.value)}
+                        className="mt-1"
+                        placeholder="fa-moon"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -362,149 +340,62 @@ export default function AdminDemographics() {
         <TabsContent value="jobs">
           <Card>
             <CardHeader>
-              <CardTitle>Data Pekerjaan</CardTitle>
-              <CardDescription>
-                Kelola data penduduk berdasarkan jenis pekerjaan - Pilih jenis pekerjaan untuk edit
-              </CardDescription>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Data Pekerjaan</CardTitle>
+                  <CardDescription>Kelola data penduduk berdasarkan jenis pekerjaan</CardDescription>
+                </div>
+                <Button onClick={handleJobSave} className="bg-green-600 hover:bg-green-700">
+                  <Save className="w-4 h-4 mr-2" />
+                  Simpan
+                </Button>
+              </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <SuccessAlert show={successMessages.jobs} />
-              
-              {/* Dropdown untuk memilih jenis pekerjaan */}
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="job-search">Cari dan Pilih Jenis Pekerjaan</Label>
-                  <Input
-                    id="job-search"
-                    placeholder="Ketik untuk mencari pekerjaan... (contoh: petani, guru, dll)"
-                    value={jobSearchQuery}
-                    onChange={(e) => {
-                      setJobSearchQuery(e.target.value);
-                      setSelectedJobIndex(null); // Reset selection when searching
-                    }}
-                    className="mb-2"
-                  />
-                  <Select
-                    value={selectedJobIndex !== null ? selectedJobIndex.toString() : ""}
-                    onValueChange={(value) => {
-                      setSelectedJobIndex(parseInt(value));
-                      // Clear success message when user starts selecting
-                      setSuccessMessages(prev => ({ ...prev, jobs: false }));
-                    }}
-                  >
-                    <SelectTrigger 
-                      className="w-full border border-gray-300 dark:border-gray-600"
-                      style={{ 
-                        backgroundColor: 'white',
-                        color: '#1f2937'
-                      }}
-                    >
-                      <SelectValue 
-                        placeholder="Pilih jenis pekerjaan untuk diedit..." 
-                        style={{ color: '#1f2937' }}
-                      />
-                    </SelectTrigger>
-                    <SelectContent 
-                      className="max-h-60 border border-gray-200 dark:border-gray-700 shadow-lg z-50"
-                      style={{
-                        backgroundColor: 'white',
-                        color: '#1f2937'
-                      }}
-                    >
-                      {editJobs
-                        .map((job, index) => ({ ...job, originalIndex: index }))
-                        .filter(job => 
-                          job.pekerjaan.toLowerCase().includes(jobSearchQuery.toLowerCase())
-                        )
-                        .map((job, filteredIndex) => (
-                        <SelectItem 
-                          key={job.originalIndex} 
-                          value={job.originalIndex.toString()}
-                          className="cursor-pointer px-3 py-2 hover:bg-gray-100"
-                          style={{
-                            backgroundColor: 'white',
-                            color: '#1f2937'
-                          }}
-                        >
-                          <div className="flex justify-between items-center w-full" style={{ color: '#1f2937' }}>
-                            <span className="truncate max-w-xs font-medium" style={{ color: '#1f2937' }}>
-                              {job.pekerjaan}
-                            </span>
-                            <span className="text-sm ml-2 font-normal" style={{ color: '#6b7280' }}>
-                              L: {job.laki} | P: {job.perempuan} | Total: {(job.laki + job.perempuan).toLocaleString('id-ID')}
-                            </span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                      {editJobs.filter(job => 
-                          job.pekerjaan.toLowerCase().includes(jobSearchQuery.toLowerCase())
-                        ).length === 0 && jobSearchQuery && (
-                        <div 
-                          className="p-3 text-center"
-                          style={{ 
-                            backgroundColor: 'white',
-                            color: '#6b7280'
-                          }}
-                        >
-                          Tidak ada pekerjaan yang cocok dengan "{jobSearchQuery}"
-                        </div>
-                      )}
-                    </SelectContent>
-                  </Select>
-                  <p className="text-sm text-gray-500">
-                    Total: {editJobs.length} jenis pekerjaan tersedia
+            <CardContent>
+              {successMessages.jobs && (
+                <div className="mb-4 p-3 bg-green-100 dark:bg-green-900 border border-green-300 dark:border-green-700 rounded-lg">
+                  <p className="text-green-800 dark:text-green-200 flex items-center">
+                    <span className="mr-2">✓</span>
+                    Data pekerjaan berhasil disimpan!
                   </p>
                 </div>
-
-                {/* Form edit untuk pekerjaan yang dipilih */}
-                {selectedJobIndex !== null && (
-                  <div className="p-4 border rounded-lg bg-gray-50 dark:bg-gray-900">
-                    <div className="space-y-4">
-                      <div>
-                        <Label>Jenis Pekerjaan</Label>
-                        <div className="p-3 bg-white dark:bg-gray-800 border rounded-md">
-                          <span className="font-medium">{editJobs[selectedJobIndex]?.pekerjaan}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="job-male">Jumlah Laki-laki</Label>
-                          <Input
-                            id="job-male"
-                            type="number"
-                            value={editJobs[selectedJobIndex]?.laki || 0}
-                            onChange={(e) => updateJob(selectedJobIndex, 'laki', parseInt(e.target.value) || 0)}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="job-female">Jumlah Perempuan</Label>
-                          <Input
-                            id="job-female"
-                            type="number"
-                            value={editJobs[selectedJobIndex]?.perempuan || 0}
-                            onChange={(e) => updateJob(selectedJobIndex, 'perempuan', parseInt(e.target.value) || 0)}
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                        <div className="flex justify-between items-center">
-                          <span className="font-medium">Total:</span>
-                          <span className="text-lg font-bold text-blue-600">
-                            {((editJobs[selectedJobIndex]?.laki || 0) + (editJobs[selectedJobIndex]?.perempuan || 0)).toLocaleString('id-ID')} orang
-                          </span>
-                        </div>
-                      </div>
+              )}
+              
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                {jobsData.map((job, index) => (
+                  <div key={job.id} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-lg">
+                    <div>
+                      <Label htmlFor={`job-name-${index}`}>Jenis Pekerjaan</Label>
+                      <Input
+                        id={`job-name-${index}`}
+                        value={job.pekerjaan}
+                        onChange={(e) => updateJob(index, 'pekerjaan', e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`job-male-${index}`}>Laki-laki</Label>
+                      <Input
+                        id={`job-male-${index}`}
+                        type="number"
+                        value={job.laki}
+                        onChange={(e) => updateJob(index, 'laki', parseInt(e.target.value) || 0)}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`job-female-${index}`}>Perempuan</Label>
+                      <Input
+                        id={`job-female-${index}`}
+                        type="number"
+                        value={job.perempuan}
+                        onChange={(e) => updateJob(index, 'perempuan', parseInt(e.target.value) || 0)}
+                        className="mt-1"
+                      />
                     </div>
                   </div>
-                )}
+                ))}
               </div>
-
-              <Button onClick={handleSaveJobs} disabled={saving || selectedJobIndex === null}>
-                <Save className="w-4 h-4 mr-2" />
-                {saving ? "Menyimpan..." : "Simpan Data Pekerjaan"}
-              </Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -512,40 +403,52 @@ export default function AdminDemographics() {
         <TabsContent value="education">
           <Card>
             <CardHeader>
-              <CardTitle>Data Pendidikan</CardTitle>
-              <CardDescription>
-                Kelola data penduduk berdasarkan tingkat pendidikan
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <SuccessAlert show={successMessages.education} />
-              {editEducation.map((edu, index) => (
-                <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border rounded-lg">
-                  <div>
-                    <Label htmlFor={`edu-level-${index}`}>Tingkat Pendidikan</Label>
-                    <Input
-                      id={`edu-level-${index}`}
-                      value={edu.level}
-                      onChange={(e) => updateEducation(index, 'level', e.target.value)}
-                      disabled
-                      className="bg-gray-100 dark:bg-gray-800"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`edu-count-${index}`}>Jumlah</Label>
-                    <Input
-                      id={`edu-count-${index}`}
-                      type="number"
-                      value={edu.count}
-                      onChange={(e) => updateEducation(index, 'count', parseInt(e.target.value) || 0)}
-                    />
-                  </div>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Data Pendidikan</CardTitle>
+                  <CardDescription>Kelola data penduduk berdasarkan tingkat pendidikan</CardDescription>
                 </div>
-              ))}
-              <Button onClick={handleSaveEducation} disabled={saving}>
-                <Save className="w-4 h-4 mr-2" />
-                {saving ? "Menyimpan..." : "Simpan Data Pendidikan"}
-              </Button>
+                <Button onClick={handleEducationSave} className="bg-green-600 hover:bg-green-700">
+                  <Save className="w-4 h-4 mr-2" />
+                  Simpan
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {successMessages.education && (
+                <div className="mb-4 p-3 bg-green-100 dark:bg-green-900 border border-green-300 dark:border-green-700 rounded-lg">
+                  <p className="text-green-800 dark:text-green-200 flex items-center">
+                    <span className="mr-2">✓</span>
+                    Data pendidikan berhasil disimpan!
+                  </p>
+                </div>
+              )}
+              
+              <div className="grid gap-4">
+                {educationData.map((education, index) => (
+                  <div key={education.id} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border rounded-lg">
+                    <div>
+                      <Label htmlFor={`education-level-${index}`}>Tingkat Pendidikan</Label>
+                      <Input
+                        id={`education-level-${index}`}
+                        value={education.level}
+                        onChange={(e) => updateEducation(index, 'level', e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`education-count-${index}`}>Jumlah</Label>
+                      <Input
+                        id={`education-count-${index}`}
+                        type="number"
+                        value={education.count}
+                        onChange={(e) => updateEducation(index, 'count', parseInt(e.target.value) || 0)}
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

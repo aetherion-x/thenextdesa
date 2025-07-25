@@ -1,11 +1,57 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Bar } from "react-chartjs-2"
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js"
+import { 
+  subscribeToRevenueData,
+  subscribeToExpenditureData,
+  subscribeToBudgetSummary,
+  initializeBudgetData,
+  type RevenueData,
+  type ExpenditureData,
+  type BudgetSummary
+} from "@/lib/budget-service"
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 export default function BudgetData() {
+  const [revenueData, setRevenueData] = useState<RevenueData[]>([])
+  const [expenditureData, setExpenditureData] = useState<ExpenditureData[]>([])
+  const [budgetSummary, setBudgetSummary] = useState<BudgetSummary | null>(null)
+  const [loading, setLoading] = useState(true)
+  const currentYear = 2024
+
+  useEffect(() => {
+    // Initialize data if needed
+    const initData = async () => {
+      await initializeBudgetData(currentYear)
+    }
+
+    // Subscribe to real-time updates
+    const unsubscribeRevenue = subscribeToRevenueData(currentYear, (data) => {
+      setRevenueData(data)
+      if (data.length > 0) setLoading(false)
+    })
+    
+    const unsubscribeExpenditure = subscribeToExpenditureData(currentYear, (data) => {
+      setExpenditureData(data)
+      if (data.length > 0) setLoading(false)
+    })
+    
+    const unsubscribeSummary = subscribeToBudgetSummary(currentYear, (data) => {
+      setBudgetSummary(data)
+      if (data) setLoading(false)
+    })
+
+    initData()
+
+    return () => {
+      unsubscribeRevenue()
+      unsubscribeExpenditure()
+      unsubscribeSummary()
+    }
+  }, [currentYear])
   const formatCurrency = (value: number) => {
     if (value >= 1.0e9) return "Rp " + (value / 1.0e9).toFixed(2) + " M"
     if (value >= 1.0e6) return "Rp " + (value / 1.0e6).toFixed(1) + " Jt"
@@ -13,30 +59,25 @@ export default function BudgetData() {
     return "Rp " + value
   }
 
-  const revenueData = {
-    labels: ["Pendapatan Asli Desa", "Pendapatan Transfer", "Pendapatan Lain-lain"],
+  // Transform Firebase data to Chart.js format
+  const revenueChartData = {
+    labels: revenueData.map(item => item.name),
     datasets: [
       {
         label: "Anggaran (Rp)",
-        data: [325310200, 2089649500, 0],
+        data: revenueData.map(item => item.amount),
         backgroundColor: ["#2e7d32", "#4caf50", "#8dd18d"],
         borderRadius: 5,
       },
     ],
   }
 
-  const expenditureData = {
-    labels: [
-      "Penyelenggaraan Pemerintahan Desa",
-      "Pelaksanaan Pembangunan Desa",
-      "Pembinaan Kemasyarakatan",
-      "Pemberdayaan Masyarakat Desa",
-      "Penanggulangan Bencana, Keadaan Darurat dan Mendesak",
-    ],
+  const expenditureChartData = {
+    labels: expenditureData.map(item => item.name),
     datasets: [
       {
         label: "Anggaran (Rp)",
-        data: [1123785756.34, 1187744000, 73627444, 218317000, 173093000],
+        data: expenditureData.map(item => item.amount),
         backgroundColor: ["#ff6b35", "#ff8a5c", "#ffab8a", "#ffcba8", "#ffe8d6"],
         borderRadius: 5,
       },
@@ -72,6 +113,16 @@ export default function BudgetData() {
     },
   }
 
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center mb-16">
@@ -88,14 +139,18 @@ export default function BudgetData() {
                 <i className="fas fa-arrow-up text-green-500 mr-2"></i>
                 Pendapatan
               </div>
-              <p className="mt-2 text-2xl font-bold text-green-500">Rp{(2414959700).toLocaleString("id-ID")}</p>
+              <p className="mt-2 text-2xl font-bold text-green-500">
+                {budgetSummary ? `Rp${budgetSummary.totalRevenue.toLocaleString("id-ID")}` : 'Loading...'}
+              </p>
             </div>
             <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg">
               <div className="flex items-center text-sm font-semibold text-gray-500 dark:text-gray-400">
                 <i className="fas fa-arrow-down text-red-500 mr-2"></i>
                 Belanja
               </div>
-              <p className="mt-2 text-2xl font-bold text-red-500">Rp{(2776567200).toLocaleString("id-ID")}</p>
+              <p className="mt-2 text-2xl font-bold text-red-500">
+                {budgetSummary ? `Rp${budgetSummary.totalExpenditure.toLocaleString("id-ID")}` : 'Loading...'}
+              </p>
             </div>
           </div>
         </div>
@@ -109,13 +164,13 @@ export default function BudgetData() {
             Detail Pendapatan Desa
           </h3>
           <div className="h-96">
-            <Bar data={revenueData} options={revenueOptions} />
+            <Bar data={revenueChartData} options={revenueOptions} />
           </div>
         </div>
         <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg">
           <h3 className="text-xl font-semibold text-center text-gray-800 dark:text-white mb-4">Detail Belanja Desa</h3>
           <div className="h-96">
-            <Bar data={expenditureData} options={expenditureOptions} />
+            <Bar data={expenditureChartData} options={expenditureOptions} />
           </div>
         </div>
       </div>

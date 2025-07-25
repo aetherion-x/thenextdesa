@@ -4,85 +4,169 @@ import { useEffect, useState } from "react"
 import { Bar } from "react-chartjs-2"
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js"
 import { 
-  getDemographicData, 
-  subscribeToDemographicData, 
+  subscribeToPopulationData,
+  subscribeToReligionsData,
+  subscribeToJobsData,
+  subscribeToEducationData,
   initializeDemographicData,
-  DemographicData,
-  JobData as FirebaseJobData
+  type PopulationData,
+  type ReligionData,
+  type JobData,
+  type EducationData
 } from "@/lib/demographic-service"
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
-interface JobData {
+interface JobDataDisplay {
   jenis: string
   jumlah: number
 }
 
 interface JobDataSet {
-  semua: JobData[]
-  laki_laki: JobData[]
-  perempuan: JobData[]
+  semua: JobDataDisplay[]
+  laki_laki: JobDataDisplay[]
+  perempuan: JobDataDisplay[]
+}
+
+// Simulasi data demografis dalam format lama untuk kompatibilitas UI
+interface DemographicDataCompat {
+  population: {
+    total: number
+    male: number
+    female: number
+    lastUpdated: Date
+  }
+  religions: Array<{
+    name: string
+    count: number
+    icon: string
+  }>
+  jobs: JobDataDisplay[]
+  education: Array<{
+    level: string
+    count: number
+  }>
+  lastUpdated: Date
 }
 
 export default function PopulationData() {
   const [filter, setFilter] = useState<"semua" | "laki_laki" | "perempuan">("semua")
   const [jobData, setJobData] = useState<JobDataSet | null>(null)
-  const [demographicData, setDemographicData] = useState<DemographicData | null>(null)
+  const [demographicData, setDemographicData] = useState<DemographicDataCompat | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    let unsubscribe: (() => void) | null = null;
+    let populationData: PopulationData | null = null
+    let religionsData: ReligionData[] = []
+    let jobsData: JobData[] = []
+    let educationData: EducationData[] = []
+
+    const updateCombinedData = () => {
+      if (populationData && religionsData.length > 0 && jobsData.length > 0 && educationData.length > 0) {
+        // Transform data ke format lama untuk kompatibilitas UI
+        const combinedData: DemographicDataCompat = {
+          population: {
+            total: populationData.total,
+            male: populationData.male,
+            female: populationData.female,
+            lastUpdated: populationData.lastUpdated
+          },
+          religions: religionsData.map(r => ({
+            name: r.name,
+            count: r.count,
+            icon: r.icon
+          })),
+          jobs: jobsData.map(j => ({
+            jenis: j.pekerjaan,
+            jumlah: j.laki + j.perempuan
+          })),
+          education: educationData.map(e => ({
+            level: e.level,
+            count: e.count
+          })),
+          lastUpdated: populationData.lastUpdated
+        }
+
+        setDemographicData(combinedData)
+
+        // Process job data untuk filter
+        const newJobData: JobDataSet = {
+          semua: jobsData
+            .map(item => ({
+              jenis: item.pekerjaan,
+              jumlah: item.laki + item.perempuan
+            }))
+            .filter(item => item.jumlah > 0),
+          
+          laki_laki: jobsData
+            .map(item => ({
+              jenis: item.pekerjaan,
+              jumlah: item.laki
+            }))
+            .filter(item => item.jumlah > 0),
+          
+          perempuan: jobsData
+            .map(item => ({
+              jenis: item.pekerjaan,
+              jumlah: item.perempuan
+            }))
+            .filter(item => item.jumlah > 0)
+        }
+
+        setJobData(newJobData)
+        setLoading(false)
+      }
+    }
 
     const initAndSubscribe = async () => {
       try {
         // Inisialisasi data jika belum ada
-        await initializeDemographicData();
+        await initializeDemographicData()
 
         // Subscribe untuk real-time updates
-        unsubscribe = subscribeToDemographicData((data) => {
-          setDemographicData(data);
-          
-          if (data && data.jobs) {
-            // Memproses data untuk setiap kategori
-            const newJobData: JobDataSet = {
-              semua: data.jobs
-                .map(item => ({
-                  jenis: item.pekerjaan,
-                  jumlah: item.laki + item.perempuan,
-                }))
-                .filter(item => item.jumlah > 0),
-              laki_laki: data.jobs
-                .map(item => ({
-                  jenis: item.pekerjaan,
-                  jumlah: item.laki,
-                }))
-                .filter(item => item.jumlah > 0),
-              perempuan: data.jobs
-                .map(item => ({
-                  jenis: item.pekerjaan,
-                  jumlah: item.perempuan,
-                }))
-                .filter(item => item.jumlah > 0),
-            };
-            
-            setJobData(newJobData);
-          }
-          setLoading(false);
-        });
-      } catch (error) {
-        console.error('Error initializing data:', error);
-        setLoading(false);
-      }
-    };
+        const unsubscribePopulation = subscribeToPopulationData((data) => {
+          populationData = data
+          updateCombinedData()
+        })
+        
+        const unsubscribeReligions = subscribeToReligionsData((data) => {
+          religionsData = data
+          updateCombinedData()
+        })
+        
+        const unsubscribeJobs = subscribeToJobsData((data) => {
+          jobsData = data
+          updateCombinedData()
+        })
+        
+        const unsubscribeEducation = subscribeToEducationData((data) => {
+          educationData = data
+          updateCombinedData()
+        })
 
-    initAndSubscribe();
+        return () => {
+          unsubscribePopulation()
+          unsubscribeReligions()
+          unsubscribeJobs()
+          unsubscribeEducation()
+        }
+      } catch (error) {
+        console.error("Error initializing demographic data:", error)
+        setLoading(false)
+      }
+    }
+
+    let unsubscribeAll: (() => void) | undefined
+    initAndSubscribe().then((cleanup) => {
+      unsubscribeAll = cleanup
+    })
 
     return () => {
-      if (unsubscribe) {
-        unsubscribe();
+      if (unsubscribeAll) {
+        unsubscribeAll()
       }
-    };
-  }, []);
+    }
+  }, [])
 
   const educationData = {
     labels: demographicData?.education?.map(edu => edu.level) || [
