@@ -21,7 +21,6 @@ export interface PopulationData {
 export interface ReligionData {
   name: string;
   count: number;
-  icon: string;
 }
 
 // Interface untuk data pekerjaan
@@ -83,9 +82,17 @@ export const saveDemographicData = async (data: Partial<DemographicData>): Promi
   }
 };
 
-// Fungsi untuk update data populasi
-export const updatePopulationData = async (populationData: PopulationData): Promise<boolean> => {
+// Fungsi untuk update data populasi dengan auto-calculate total
+export const updatePopulationData = async (male: number, female: number): Promise<boolean> => {
   try {
+    const total = male + female;
+    const populationData: PopulationData = {
+      total,
+      male,
+      female,
+      lastUpdated: new Date(),
+    };
+    
     const docRef = doc(db, 'demographics', DEMOGRAPHIC_DOC_ID);
     await updateDoc(docRef, {
       population: populationData,
@@ -184,13 +191,13 @@ export const initializeDemographicData = async (): Promise<boolean> => {
         lastUpdated: new Date(),
       },
       religions: [
-        { name: "Islam", count: 8285, icon: "fas fa-mosque" },
-        { name: "Kristen", count: 22, icon: "fas fa-church" },
-        { name: "Katolik", count: 268, icon: "fas fa-bible" },
-        { name: "Hindu", count: 23, icon: "fas fa-om" },
-        { name: "Buddha", count: 0, icon: "fas fa-dharmachakra" },
-        { name: "Konghucu", count: 0, icon: "fas fa-yin-yang" },
-        { name: "Kepercayaan", count: 0, icon: "fas fa-pray" },
+        { name: "Islam", count: 8285 },
+        { name: "Kristen", count: 22 },
+        { name: "Katolik", count: 268 },
+        { name: "Hindu", count: 23 },
+        { name: "Buddha", count: 0 },
+        { name: "Konghucu", count: 0 },
+        { name: "Kepercayaan", count: 0 },
       ],
       jobs: [
         { pekerjaan: "BELUM/TIDAK BEKERJA", laki: 958, perempuan: 856 },

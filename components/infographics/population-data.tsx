@@ -195,14 +195,29 @@ export default function PopulationData() {
           </div>
           {(() => {
             const religions = demographicData?.religions || [
-              { name: "Islam", count: 8285, icon: "fas fa-mosque" },
-              { name: "Kristen", count: 22, icon: "fas fa-church" },
-              { name: "Katolik", count: 268, icon: "fas fa-bible" },
-              { name: "Hindu", count: 23, icon: "fas fa-om" },
-              { name: "Buddha", count: 0, icon: "fas fa-dharmachakra" },
-              { name: "Konghucu", count: 0, icon: "fas fa-yin-yang" },
-              { name: "Kepercayaan", count: 0, icon: "fas fa-pray" },
+              { name: "Islam", count: 8285 },
+              { name: "Kristen", count: 22 },
+              { name: "Katolik", count: 268 },
+              { name: "Hindu", count: 23 },
+              { name: "Buddha", count: 0 },
+              { name: "Konghucu", count: 0 },
+              { name: "Kepercayaan", count: 0 },
             ];
+            
+            // Mapping icon berdasarkan nama agama
+            const getIconForReligion = (name: string) => {
+              const iconMap: { [key: string]: string } = {
+                "Islam": "fas fa-mosque",
+                "Kristen": "fas fa-church", 
+                "Katolik": "fas fa-bible",
+                "Hindu": "fas fa-om",
+                "Buddha": "fas fa-dharmachakra",
+                "Konghucu": "fas fa-yin-yang",
+                "Kepercayaan": "fas fa-pray"
+              };
+              return iconMap[name] || "fas fa-pray";
+            };
+            
             const firstRowReligions = religions.slice(0, 4);
             const secondRowReligions = religions.slice(4);
             return (
@@ -210,7 +225,7 @@ export default function PopulationData() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                   {firstRowReligions.map((religion, index) => (
                     <div key={index} className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-lg text-center flex flex-col items-center">
-                      <i className={`${religion.icon} text-blue-600 text-4xl mt-2 mb-6`}></i>
+                      <i className={`${getIconForReligion(religion.name)} text-blue-600 text-4xl mt-2 mb-6`}></i>
                       <p className="text-4xl font-extrabold text-gray-900 dark:text-white">
                         {religion.count.toLocaleString("id-ID")}
                       </p>
@@ -222,7 +237,7 @@ export default function PopulationData() {
                 <div className="mt-8 flex justify-center flex-wrap gap-8">
                   {secondRowReligions.map((religion, index) => (
                     <div key={index} className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-lg text-center flex flex-col items-center w-full sm:w-auto lg:w-[calc(25%-1.5rem)]">
-                      <i className={`${religion.icon} text-blue-600 text-4xl mt-2 mb-6`}></i>
+                      <i className={`${getIconForReligion(religion.name)} text-blue-600 text-4xl mt-2 mb-6`}></i>
                       <p className="text-4xl font-extrabold text-gray-900 dark:text-white">
                         {religion.count.toLocaleString("id-ID")}
                       </p>

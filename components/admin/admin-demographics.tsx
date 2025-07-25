@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, Plus, Save, RefreshCw } from "lucide-react";
+import { Save, RefreshCw } from "lucide-react";
+import SuccessAlert from "@/components/ui/success-alert";
 import { 
   getDemographicData, 
   updatePopulationData, 
@@ -24,13 +25,20 @@ export default function AdminDemographics() {
   const [demographicData, setDemographicData] = useState<DemographicData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState("population");
+
+  // Success state untuk setiap tab
+  const [successMessages, setSuccessMessages] = useState({
+    population: false,
+    religion: false,
+    jobs: false,
+    education: false,
+  });
 
   // Local state untuk editing
-  const [editPopulation, setEditPopulation] = useState<PopulationData>({
-    total: 0,
+  const [editPopulation, setEditPopulation] = useState<{ male: number; female: number }>({
     male: 0,
-    female: 0,
-    lastUpdated: new Date()
+    female: 0
   });
   
   const [editReligions, setEditReligions] = useState<ReligionData[]>([]);
@@ -47,7 +55,7 @@ export default function AdminDemographics() {
       const data = await getDemographicData();
       if (data) {
         setDemographicData(data);
-        setEditPopulation(data.population);
+        setEditPopulation({ male: data.population.male, female: data.population.female });
         setEditReligions([...data.religions]);
         setEditJobs([...data.jobs]);
         setEditEducation([...data.education]);
@@ -67,13 +75,13 @@ export default function AdminDemographics() {
   const handleSavePopulation = async () => {
     try {
       setSaving(true);
-      const success = await updatePopulationData(editPopulation);
+      // Clear success message
+      setSuccessMessages(prev => ({ ...prev, population: false }));
+      
+      const success = await updatePopulationData(editPopulation.male, editPopulation.female);
       if (success) {
-        toast({
-          title: "Berhasil",
-          description: "Data populasi berhasil disimpan",
-        });
-        await loadData();
+        setSuccessMessages(prev => ({ ...prev, population: true }));
+        // Data akan update otomatis melalui real-time listener
       } else {
         throw new Error("Failed to save");
       }
@@ -91,13 +99,13 @@ export default function AdminDemographics() {
   const handleSaveReligions = async () => {
     try {
       setSaving(true);
+      // Clear success message
+      setSuccessMessages(prev => ({ ...prev, religion: false }));
+      
       const success = await updateReligionData(editReligions);
       if (success) {
-        toast({
-          title: "Berhasil",
-          description: "Data agama berhasil disimpan",
-        });
-        await loadData();
+        setSuccessMessages(prev => ({ ...prev, religion: true }));
+        // Data akan update otomatis melalui real-time listener
       } else {
         throw new Error("Failed to save");
       }
@@ -115,13 +123,13 @@ export default function AdminDemographics() {
   const handleSaveJobs = async () => {
     try {
       setSaving(true);
+      // Clear success message
+      setSuccessMessages(prev => ({ ...prev, jobs: false }));
+      
       const success = await updateJobData(editJobs);
       if (success) {
-        toast({
-          title: "Berhasil",
-          description: "Data pekerjaan berhasil disimpan",
-        });
-        await loadData();
+        setSuccessMessages(prev => ({ ...prev, jobs: true }));
+        // Data akan update otomatis melalui real-time listener
       } else {
         throw new Error("Failed to save");
       }
@@ -139,13 +147,13 @@ export default function AdminDemographics() {
   const handleSaveEducation = async () => {
     try {
       setSaving(true);
+      // Clear success message
+      setSuccessMessages(prev => ({ ...prev, education: false }));
+      
       const success = await updateEducationData(editEducation);
       if (success) {
-        toast({
-          title: "Berhasil",
-          description: "Data pendidikan berhasil disimpan",
-        });
-        await loadData();
+        setSuccessMessages(prev => ({ ...prev, education: true }));
+        // Data akan update otomatis melalui real-time listener
       } else {
         throw new Error("Failed to save");
       }
@@ -160,35 +168,25 @@ export default function AdminDemographics() {
     }
   };
 
-  const addNewJob = () => {
-    setEditJobs([...editJobs, { pekerjaan: "", laki: 0, perempuan: 0 }]);
-  };
-
-  const removeJob = (index: number) => {
-    setEditJobs(editJobs.filter((_, i) => i !== index));
-  };
-
   const updateJob = (index: number, field: keyof JobData, value: string | number) => {
+    // Clear success message when user starts editing
+    setSuccessMessages(prev => ({ ...prev, jobs: false }));
     const newJobs = [...editJobs];
     newJobs[index] = { ...newJobs[index], [field]: value };
     setEditJobs(newJobs);
   };
 
-  const addNewEducation = () => {
-    setEditEducation([...editEducation, { level: "", count: 0 }]);
-  };
-
-  const removeEducation = (index: number) => {
-    setEditEducation(editEducation.filter((_, i) => i !== index));
-  };
-
   const updateEducation = (index: number, field: keyof EducationData, value: string | number) => {
+    // Clear success message when user starts editing
+    setSuccessMessages(prev => ({ ...prev, education: false }));
     const newEducation = [...editEducation];
     newEducation[index] = { ...newEducation[index], [field]: value };
     setEditEducation(newEducation);
   };
 
   const updateReligion = (index: number, field: keyof ReligionData, value: string | number) => {
+    // Clear success message when user starts editing
+    setSuccessMessages(prev => ({ ...prev, religion: false }));
     const newReligions = [...editReligions];
     newReligions[index] = { ...newReligions[index], [field]: value };
     setEditReligions(newReligions);
@@ -228,7 +226,7 @@ export default function AdminDemographics() {
         </div>
       )}
 
-      <Tabs defaultValue="population" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="population">Data Populasi</TabsTrigger>
           <TabsTrigger value="religion">Data Agama</TabsTrigger>
@@ -245,29 +243,22 @@ export default function AdminDemographics() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="total">Total Penduduk</Label>
-                  <Input
-                    id="total"
-                    type="number"
-                    value={editPopulation.total}
-                    onChange={(e) => setEditPopulation({
-                      ...editPopulation,
-                      total: parseInt(e.target.value) || 0
-                    })}
-                  />
-                </div>
+              <SuccessAlert show={successMessages.population} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="male">Laki-laki</Label>
                   <Input
                     id="male"
                     type="number"
                     value={editPopulation.male}
-                    onChange={(e) => setEditPopulation({
-                      ...editPopulation,
-                      male: parseInt(e.target.value) || 0
-                    })}
+                    onChange={(e) => {
+                      // Clear success message when user starts editing
+                      setSuccessMessages(prev => ({ ...prev, population: false }));
+                      setEditPopulation({
+                        ...editPopulation,
+                        male: parseInt(e.target.value) || 0
+                      });
+                    }}
                   />
                 </div>
                 <div>
@@ -276,12 +267,22 @@ export default function AdminDemographics() {
                     id="female"
                     type="number"
                     value={editPopulation.female}
-                    onChange={(e) => setEditPopulation({
-                      ...editPopulation,
-                      female: parseInt(e.target.value) || 0
-                    })}
+                    onChange={(e) => {
+                      // Clear success message when user starts editing
+                      setSuccessMessages(prev => ({ ...prev, population: false }));
+                      setEditPopulation({
+                        ...editPopulation,
+                        female: parseInt(e.target.value) || 0
+                      });
+                    }}
                   />
                 </div>
+              </div>
+              <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <Label>Total Penduduk (Otomatis)</Label>
+                <p className="text-2xl font-bold text-blue-600">
+                  {(editPopulation.male + editPopulation.female).toLocaleString('id-ID')} Jiwa
+                </p>
               </div>
               <Button onClick={handleSavePopulation} disabled={saving}>
                 <Save className="w-4 h-4 mr-2" />
@@ -300,14 +301,17 @@ export default function AdminDemographics() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              <SuccessAlert show={successMessages.religion} />
               {editReligions.map((religion, index) => (
-                <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-lg">
+                <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border rounded-lg">
                   <div>
                     <Label htmlFor={`religion-name-${index}`}>Nama Agama</Label>
                     <Input
                       id={`religion-name-${index}`}
                       value={religion.name}
                       onChange={(e) => updateReligion(index, 'name', e.target.value)}
+                      disabled
+                      className="bg-gray-100 dark:bg-gray-800"
                     />
                   </div>
                   <div>
@@ -317,15 +321,6 @@ export default function AdminDemographics() {
                       type="number"
                       value={religion.count}
                       onChange={(e) => updateReligion(index, 'count', parseInt(e.target.value) || 0)}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`religion-icon-${index}`}>Icon Class</Label>
-                    <Input
-                      id={`religion-icon-${index}`}
-                      value={religion.icon}
-                      onChange={(e) => updateReligion(index, 'icon', e.target.value)}
-                      placeholder="fas fa-mosque"
                     />
                   </div>
                 </div>
@@ -347,15 +342,18 @@ export default function AdminDemographics() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              <SuccessAlert show={successMessages.jobs} />
               <div className="max-h-96 overflow-y-auto space-y-4">
                 {editJobs.map((job, index) => (
-                  <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border rounded-lg">
-                    <div className="md:col-span-2">
+                  <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-lg">
+                    <div>
                       <Label htmlFor={`job-name-${index}`}>Jenis Pekerjaan</Label>
                       <Input
                         id={`job-name-${index}`}
                         value={job.pekerjaan}
                         onChange={(e) => updateJob(index, 'pekerjaan', e.target.value)}
+                        disabled
+                        className="bg-gray-100 dark:bg-gray-800"
                       />
                     </div>
                     <div>
@@ -367,37 +365,22 @@ export default function AdminDemographics() {
                         onChange={(e) => updateJob(index, 'laki', parseInt(e.target.value) || 0)}
                       />
                     </div>
-                    <div className="flex items-end space-x-2">
-                      <div className="flex-1">
-                        <Label htmlFor={`job-female-${index}`}>Perempuan</Label>
-                        <Input
-                          id={`job-female-${index}`}
-                          type="number"
-                          value={job.perempuan}
-                          onChange={(e) => updateJob(index, 'perempuan', parseInt(e.target.value) || 0)}
-                        />
-                      </div>
-                      <Button 
-                        variant="destructive" 
-                        size="sm"
-                        onClick={() => removeJob(index)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                    <div>
+                      <Label htmlFor={`job-female-${index}`}>Perempuan</Label>
+                      <Input
+                        id={`job-female-${index}`}
+                        type="number"
+                        value={job.perempuan}
+                        onChange={(e) => updateJob(index, 'perempuan', parseInt(e.target.value) || 0)}
+                      />
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="flex space-x-2">
-                <Button onClick={addNewJob} variant="outline">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Tambah Pekerjaan
-                </Button>
-                <Button onClick={handleSaveJobs} disabled={saving}>
-                  <Save className="w-4 h-4 mr-2" />
-                  {saving ? "Menyimpan..." : "Simpan Data Pekerjaan"}
-                </Button>
-              </div>
+              <Button onClick={handleSaveJobs} disabled={saving}>
+                <Save className="w-4 h-4 mr-2" />
+                {saving ? "Menyimpan..." : "Simpan Data Pekerjaan"}
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -411,46 +394,34 @@ export default function AdminDemographics() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              <SuccessAlert show={successMessages.education} />
               {editEducation.map((edu, index) => (
-                <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-lg">
-                  <div className="md:col-span-2">
+                <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border rounded-lg">
+                  <div>
                     <Label htmlFor={`edu-level-${index}`}>Tingkat Pendidikan</Label>
                     <Input
                       id={`edu-level-${index}`}
                       value={edu.level}
                       onChange={(e) => updateEducation(index, 'level', e.target.value)}
+                      disabled
+                      className="bg-gray-100 dark:bg-gray-800"
                     />
                   </div>
-                  <div className="flex items-end space-x-2">
-                    <div className="flex-1">
-                      <Label htmlFor={`edu-count-${index}`}>Jumlah</Label>
-                      <Input
-                        id={`edu-count-${index}`}
-                        type="number"
-                        value={edu.count}
-                        onChange={(e) => updateEducation(index, 'count', parseInt(e.target.value) || 0)}
-                      />
-                    </div>
-                    <Button 
-                      variant="destructive" 
-                      size="sm"
-                      onClick={() => removeEducation(index)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                  <div>
+                    <Label htmlFor={`edu-count-${index}`}>Jumlah</Label>
+                    <Input
+                      id={`edu-count-${index}`}
+                      type="number"
+                      value={edu.count}
+                      onChange={(e) => updateEducation(index, 'count', parseInt(e.target.value) || 0)}
+                    />
                   </div>
                 </div>
               ))}
-              <div className="flex space-x-2">
-                <Button onClick={addNewEducation} variant="outline">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Tambah Tingkat Pendidikan
-                </Button>
-                <Button onClick={handleSaveEducation} disabled={saving}>
-                  <Save className="w-4 h-4 mr-2" />
-                  {saving ? "Menyimpan..." : "Simpan Data Pendidikan"}
-                </Button>
-              </div>
+              <Button onClick={handleSaveEducation} disabled={saving}>
+                <Save className="w-4 h-4 mr-2" />
+                {saving ? "Menyimpan..." : "Simpan Data Pendidikan"}
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
