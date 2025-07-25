@@ -22,37 +22,133 @@ export default function PopulationData() {
   const [jobData, setJobData] = useState<JobDataSet | null>(null)
 
   useEffect(() => {
-    // Mock job data - in real app, this would come from an API
-    const mockJobData: JobDataSet = {
-      semua: [
-        { jenis: "BELUM/TIDAK BEKERJA", jumlah: 269 },
-        { jenis: "MENGURUS RUMAH TANGGA", jumlah: 269 },
-        { jenis: "PELAJAR/MAHASISWA", jumlah: 323 },
-        { jenis: "PETANI/PEKEBUN", jumlah: 38 },
-        { jenis: "NELAYAN/PERIKANAN", jumlah: 51 },
-        { jenis: "KARYAWAN SWASTA", jumlah: 117 },
-        { jenis: "WIRASWASTA", jumlah: 27 },
-      ],
-      laki_laki: [
-        { jenis: "BELUM/TIDAK BEKERJA", jumlah: 130 },
-        { jenis: "PELAJAR/MAHASISWA", jumlah: 170 },
-        { jenis: "PETANI/PEKEBUN", jumlah: 35 },
-        { jenis: "NELAYAN/PERIKANAN", jumlah: 50 },
-        { jenis: "KARYAWAN SWASTA", jumlah: 90 },
-        { jenis: "WIRASWASTA", jumlah: 25 },
-      ],
-      perempuan: [
-        { jenis: "BELUM/TIDAK BEKERJA", jumlah: 139 },
-        { jenis: "MENGURUS RUMAH TANGGA", jumlah: 260 },
-        { jenis: "PELAJAR/MAHASISWA", jumlah: 153 },
-        { jenis: "PETANI/PEKEBUN", jumlah: 3 },
-        { jenis: "NELAYAN/PERIKANAN", jumlah: 1 },
-        { jenis: "KARYAWAN SWASTA", jumlah: 27 },
-        { jenis: "WIRASWASTA", jumlah: 2 },
-      ],
-    }
-    setJobData(mockJobData)
-  }, [])
+    // Data mentah diisi dengan angka acak (random)
+    const rawData = [
+        { pekerjaan: "BELUM/TIDAK BEKERJA", laki: 958, perempuan: 856 },
+        { pekerjaan: "MENGURUS RUMAH TANGGA", laki: 25, perempuan: 1228 },
+        { pekerjaan: "PELAJAR/MAHASISWA", laki: 640, perempuan: 614 },
+        { pekerjaan: "PENSIUNAN", laki: 14, perempuan: 11 },
+        { pekerjaan: "PEGAWAI NEGERI SIPIL (PNS)", laki: 26, perempuan: 19 },
+        { pekerjaan: "TENTARA NASIONAL INDONESIA", laki: 5, perempuan: 0 },
+        { pekerjaan: "KEPOLISIAN RI (POLRI)", laki: 2, perempuan: 0 },
+        { pekerjaan: "PERDAGANGAN", laki: 85, perempuan: 106 },
+        { pekerjaan: "PETANI/PEKEBUN", laki: 532, perempuan: 259 },
+        { pekerjaan: "PETERNAK", laki: 19, perempuan: 3 },
+        { pekerjaan: "NELAYAN/PERIKANAN", laki: 8, perempuan: 4 },
+        { pekerjaan: "INDUSTRI", laki: 13, perempuan: 5 },
+        { pekerjaan: "KONSTRUKSI", laki: 45, perempuan: 2 },
+        { pekerjaan: "TRANSPORTASI", laki: 21, perempuan: 1 },
+        { pekerjaan: "KARYAWAN SWASTA", laki: 798, perempuan: 483 },
+        { pekerjaan: "KARYAWAN BUMN", laki: 9, perempuan: 12 },
+        { pekerjaan: "KARYAWAN BUMD", laki: 4, perempuan: 3 },
+        { pekerjaan: "KARYAWAN HONORER", laki: 12, perempuan: 18 },
+        { pekerjaan: "BURUH HARIAN LEPAS", laki: 265, perempuan: 78 },
+        { pekerjaan: "BURUH TANI/PERKEBUNAN", laki: 362, perempuan: 205 },
+        { pekerjaan: "BURUH NELAYAN/PERIKANAN", laki: 5, perempuan: 2 },
+        { pekerjaan: "BURUH PETERNAKAN", laki: 7, perempuan: 13 },
+        { pekerjaan: "PEMBANTU RUMAH TANGGA", laki: 3, perempuan: 38 },
+        { pekerjaan: "TUKANG CUKUR", laki: 15, perempuan: 2 },
+        { pekerjaan: "TUKANG LISTRIK", laki: 9, perempuan: 0 },
+        { pekerjaan: "TUKANG BATU", laki: 24, perempuan: 0 },
+        { pekerjaan: "TUKANG KAYU", laki: 13, perempuan: 0 },
+        { pekerjaan: "TUKANG SOL SEPATU", laki: 5, perempuan: 0 },
+        { pekerjaan: "TUKANG LAS/PANDAI BESI", laki: 11, perempuan: 0 },
+        { pekerjaan: "TUKANG JAHIT", laki: 2, perempuan: 16 },
+        { pekerjaan: "TUKANG GIGI", laki: 1, perempuan: 1 },
+        { pekerjaan: "PENATA RIAS", laki: 1, perempuan: 12 },
+        { pekerjaan: "PENATA BUSANA", laki: 0, perempuan: 5 },
+        { pekerjaan: "PENATA RAMBUT", laki: 2, perempuan: 8 },
+        { pekerjaan: "MEKANIK", laki: 18, perempuan: 0 },
+        { pekerjaan: "SENIMAN", laki: 4, perempuan: 3 },
+        { pekerjaan: "TABIB", laki: 2, perempuan: 3 },
+        { pekerjaan: "PARAJI", laki: 0, perempuan: 5 },
+        { pekerjaan: "PERANCANG BUSANA", laki: 1, perempuan: 4 },
+        { pekerjaan: "PENTERJEMAH", laki: 2, perempuan: 2 },
+        { pekerjaan: "IMAM MASJID", laki: 3, perempuan: 0 },
+        { pekerjaan: "PENDETA", laki: 1, perempuan: 0 },
+        { pekerjaan: "PASTOR", laki: 1, perempuan: 0 },
+        { pekerjaan: "WARTAWAN", laki: 3, perempuan: 2 },
+        { pekerjaan: "USTADZ/MUBALIGH", laki: 5, perempuan: 1 },
+        { pekerjaan: "JURU MASAK", laki: 2, perempuan: 15 },
+        { pekerjaan: "PROMOTOR ACARA", laki: 1, perempuan: 1 },
+        { pekerjaan: "ANGGOTA DPR RI", laki: 0, perempuan: 0 },
+        { pekerjaan: "ANGGOTA DPD RI", laki: 0, perempuan: 0 },
+        { pekerjaan: "ANGGOTA BPK", laki: 0, perempuan: 0 },
+        { pekerjaan: "PRESIDEN", laki: 0, perempuan: 0 },
+        { pekerjaan: "WAKIL PRESIDEN", laki: 0, perempuan: 0 },
+        { pekerjaan: "ANGGOTA MAHKAMAH KONSTITUSI", laki: 0, perempuan: 0 },
+        { pekerjaan: "ANGGOTA KABINET KEMENTRIAN", laki: 0, perempuan: 0 },
+        { pekerjaan: "DUTA BESAR", laki: 0, perempuan: 0 },
+        { pekerjaan: "GUBERNUR", laki: 0, perempuan: 0 },
+        { pekerjaan: "WAKIL GUBERNUR", laki: 0, perempuan: 0 },
+        { pekerjaan: "BUPATI", laki: 1, perempuan: 0 },
+        { pekerjaan: "WAKIL BUPATI", laki: 1, perempuan: 0 },
+        { pekerjaan: "WALIKOTA", laki: 0, perempuan: 0 },
+        { pekerjaan: "WAKIL WALIKOTA", laki: 0, perempuan: 0 },
+        { pekerjaan: "ANGGOTA DPRD PROP.", laki: 2, perempuan: 1 },
+        { pekerjaan: "ANGGOTA DPRD KAB./KOT.", laki: 3, perempuan: 2 },
+        { pekerjaan: "DOSEN", laki: 15, perempuan: 18 },
+        { pekerjaan: "GURU", laki: 24, perempuan: 40 },
+        { pekerjaan: "PILOT", laki: 3, perempuan: 0 },
+        { pekerjaan: "PENGACARA", laki: 5, perempuan: 2 },
+        { pekerjaan: "NOTARIS", laki: 3, perempuan: 4 },
+        { pekerjaan: "ARSITEK", laki: 4, perempuan: 3 },
+        { pekerjaan: "AKUNTAN", laki: 6, perempuan: 7 },
+        { pekerjaan: "KONSULTAN", laki: 8, perempuan: 5 },
+        { pekerjaan: "DOKTER", laki: 10, perempuan: 12 },
+        { pekerjaan: "BIDAN", laki: 0, perempuan: 15 },
+        { pekerjaan: "PERAWAT", laki: 7, perempuan: 21 },
+        { pekerjaan: "APOTEKER", laki: 2, perempuan: 8 },
+        { pekerjaan: "PSIKIATER/PSIKOLOG", laki: 1, perempuan: 3 },
+        { pekerjaan: "PENYIAR TELEVISI", laki: 2, perempuan: 3 },
+        { pekerjaan: "PENYIAR RADIO", laki: 4, perempuan: 4 },
+        { pekerjaan: "PELAUT", laki: 22, perempuan: 1 },
+        { pekerjaan: "PENELITI", laki: 5, perempuan: 6 },
+        { pekerjaan: "SOPIR", laki: 55, perempuan: 1 },
+        { pekerjaan: "PIALANG", laki: 3, perempuan: 2 },
+        { pekerjaan: "PARANORMAL", laki: 2, perempuan: 1 },
+        { pekerjaan: "PEDAGANG", laki: 150, perempuan: 104 },
+        { pekerjaan: "PERANGKAT DESA", laki: 8, perempuan: 3 },
+        { pekerjaan: "KEPALA DESA", laki: 1, perempuan: 0 },
+        { pekerjaan: "BIARAWAN/BIARAWATI", laki: 1, perempuan: 3 },
+        { pekerjaan: "WIRASWASTA", laki: 330, perempuan: 203 },
+        { pekerjaan: "ANGGOTA LEMB. TINGGI LAINNYA", laki: 2, perempuan: 0 },
+        { pekerjaan: "ARTIS", laki: 1, perempuan: 2 },
+        { pekerjaan: "ATLIT", laki: 5, perempuan: 3 },
+        { pekerjaan: "CHEFF", laki: 4, perempuan: 6 },
+        { pekerjaan: "MANAJER", laki: 12, perempuan: 9 },
+        { pekerjaan: "TENAGA TATA USAHA", laki: 8, perempuan: 15 },
+        { pekerjaan: "OPERATOR", laki: 25, perempuan: 10 },
+        { pekerjaan: "PEKERJA PENGOLAHAN KERAJINAN", laki: 10, perempuan: 25 },
+        { pekerjaan: "TEKNISI", laki: 30, perempuan: 5 },
+        { pekerjaan: "ASISTEN AHLI", laki: 7, perempuan: 10 },
+        { pekerjaan: "PEKERJAAN LAINNYA", laki: 50, perempuan: 45 },
+    ];
+
+    // Memproses data untuk setiap kategori
+    const newJobData: JobDataSet = {
+      semua: rawData
+        .map(item => ({
+          jenis: item.pekerjaan,
+          jumlah: item.laki + item.perempuan,
+        }))
+        .filter(item => item.jumlah > 0), // Filter pekerjaan dengan jumlah > 0
+      laki_laki: rawData
+        .map(item => ({
+          jenis: item.pekerjaan,
+          jumlah: item.laki,
+        }))
+        .filter(item => item.jumlah > 0), // Filter pekerjaan dengan jumlah > 0
+      perempuan: rawData
+        .map(item => ({
+          jenis: item.pekerjaan,
+          jumlah: item.perempuan,
+        }))
+        .filter(item => item.jumlah > 0), // Filter pekerjaan dengan jumlah > 0
+    };
+    
+    setJobData(newJobData);
+  }, []);
 
   const educationData = {
     labels: [
@@ -75,7 +171,7 @@ export default function PopulationData() {
         borderRadius: 5,
       },
     ],
-  }
+  };
 
   const educationOptions = {
     responsive: true,
@@ -86,11 +182,13 @@ export default function PopulationData() {
     scales: {
       y: { beginAtZero: true },
     },
-  }
+  };
 
-  const currentJobData = jobData?.[filter] || []
-  const sortedJobData = [...currentJobData].sort((a, b) => b.jumlah - a.jumlah)
-  const top6Jobs = sortedJobData.slice(0, 6)
+  const currentJobData = jobData?.[filter] || [];
+  // Urutkan data pekerjaan dari yang terbanyak
+  const sortedJobData = [...currentJobData].sort((a, b) => b.jumlah - a.jumlah);
+  // Ambil 6 pekerjaan teratas untuk ditampilkan dalam kartu
+  const top6Jobs = sortedJobData.slice(0, 6);
 
   return (
     <div>
@@ -144,30 +242,47 @@ export default function PopulationData() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">Statistik Berdasarkan Agama</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
+          {(() => {
+            const religions = [
               { name: "Islam", count: 8285, icon: "fas fa-mosque" },
               { name: "Kristen", count: 22, icon: "fas fa-church" },
               { name: "Katolik", count: 268, icon: "fas fa-bible" },
               { name: "Hindu", count: 23, icon: "fas fa-om" },
               { name: "Buddha", count: 0, icon: "fas fa-dharmachakra" },
               { name: "Konghucu", count: 0, icon: "fas fa-yin-yang" },
-              { name: "Kepercayaan Lainnya", count: 0, icon: "fas fa-pray" },
-              { name: "Aliran Kepercayaan", count: 0, icon: "fas fa-praying-hands" },
-            ].map((religion, index) => (
-              <div
-                key={index}
-                className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-lg text-center flex flex-col items-center"
-              >
-                <i className={`${religion.icon} text-blue-600 text-4xl mt-2 mb-6`}></i>
-                <p className="text-4xl font-extrabold text-gray-900 dark:text-white">
-                  {religion.count.toLocaleString("id-ID")}
-                </p>
-                <p className="mt-2 text-lg font-medium text-gray-600 dark:text-gray-300">{religion.name}</p>
-                <p className="text-sm text-gray-400 dark:text-gray-500">Jiwa</p>
+              { name: "Kepercayaan", count: 0, icon: "fas fa-pray" },
+            ];
+            const firstRowReligions = religions.slice(0, 4);
+            const secondRowReligions = religions.slice(4);
+            return (
+              <div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                  {firstRowReligions.map((religion, index) => (
+                    <div key={index} className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-lg text-center flex flex-col items-center">
+                      <i className={`${religion.icon} text-blue-600 text-4xl mt-2 mb-6`}></i>
+                      <p className="text-4xl font-extrabold text-gray-900 dark:text-white">
+                        {religion.count.toLocaleString("id-ID")}
+                      </p>
+                      <p className="mt-2 text-lg font-medium text-gray-600 dark:text-gray-300">{religion.name}</p>
+                      <p className="text-sm text-gray-400 dark:text-gray-500">Jiwa</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-8 flex justify-center flex-wrap gap-8">
+                  {secondRowReligions.map((religion, index) => (
+                    <div key={index} className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-lg text-center flex flex-col items-center w-full sm:w-auto lg:w-[calc(25%-1.5rem)]">
+                      <i className={`${religion.icon} text-blue-600 text-4xl mt-2 mb-6`}></i>
+                      <p className="text-4xl font-extrabold text-gray-900 dark:text-white">
+                        {religion.count.toLocaleString("id-ID")}
+                      </p>
+                      <p className="mt-2 text-lg font-medium text-gray-600 dark:text-gray-300">{religion.name}</p>
+                      <p className="text-sm text-gray-400 dark:text-gray-500">Jiwa</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
+            );
+          })()}
         </div>
       </section>
 
