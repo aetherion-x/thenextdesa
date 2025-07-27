@@ -209,9 +209,27 @@ export default function AdminBudget({ onBack }: AdminBudgetProps) {
       )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="revenue">Pendapatan</TabsTrigger>
-          <TabsTrigger value="expenditure">Belanja</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+          <TabsTrigger 
+            value="revenue"
+            className="relative data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-sm hover:bg-green-50 hover:text-green-600 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-green-400 dark:hover:bg-gray-700 dark:hover:text-green-400 transition-all duration-200 font-medium"
+          >
+            <i className="fas fa-arrow-up mr-2"></i>
+            Pendapatan
+            {activeTab === "revenue" && (
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-green-600 dark:bg-green-400 rounded-full"></div>
+            )}
+          </TabsTrigger>
+          <TabsTrigger 
+            value="expenditure"
+            className="relative data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-sm hover:bg-green-50 hover:text-green-600 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-green-400 dark:hover:bg-gray-700 dark:hover:text-green-400 transition-all duration-200 font-medium"
+          >
+            <i className="fas fa-arrow-down mr-2"></i>
+            Belanja
+            {activeTab === "expenditure" && (
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-green-600 dark:bg-green-400 rounded-full"></div>
+            )}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="revenue">

@@ -69,10 +69,10 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
 
   // Set default selected job when jobs data is loaded
   useEffect(() => {
-    if (jobsData.length > 0 && !selectedJobId) {
+    if (jobsData.length > 0 && !selectedJobId && activeTab === "jobs") {
       setSelectedJobId(jobsData[0].id);
     }
-  }, [jobsData, selectedJobId]);
+  }, [jobsData, selectedJobId, activeTab]);
 
   const loadData = async () => {
     try {
@@ -368,8 +368,13 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
                         value={religion.laki}
                         onChange={(e) => {
                           const laki = parseInt(e.target.value) || 0;
-                          updateReligion(index, 'laki', laki);
-                          updateReligion(index, 'jumlah', laki + religion.perempuan);
+                          const updated = [...religionsData];
+                          updated[index] = { 
+                            ...updated[index], 
+                            laki: laki,
+                            jumlah: laki + updated[index].perempuan 
+                          };
+                          setReligionsData(updated);
                         }}
                         className="mt-1"
                       />
@@ -382,8 +387,13 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
                         value={religion.perempuan}
                         onChange={(e) => {
                           const perempuan = parseInt(e.target.value) || 0;
-                          updateReligion(index, 'perempuan', perempuan);
-                          updateReligion(index, 'jumlah', religion.laki + perempuan);
+                          const updated = [...religionsData];
+                          updated[index] = { 
+                            ...updated[index], 
+                            perempuan: perempuan,
+                            jumlah: updated[index].laki + perempuan 
+                          };
+                          setReligionsData(updated);
                         }}
                         className="mt-1"
                       />
@@ -520,8 +530,13 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
                           value={selectedJob.laki}
                           onChange={(e) => {
                             const laki = parseInt(e.target.value) || 0;
-                            updateJob(jobIndex, 'laki', laki);
-                            updateJob(jobIndex, 'jumlah', laki + selectedJob.perempuan);
+                            const updated = [...jobsData];
+                            updated[jobIndex] = { 
+                              ...updated[jobIndex], 
+                              laki: laki,
+                              jumlah: laki + updated[jobIndex].perempuan 
+                            };
+                            setJobsData(updated);
                           }}
                           className="mt-1"
                           placeholder="0"
@@ -539,8 +554,13 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
                           value={selectedJob.perempuan}
                           onChange={(e) => {
                             const perempuan = parseInt(e.target.value) || 0;
-                            updateJob(jobIndex, 'perempuan', perempuan);
-                            updateJob(jobIndex, 'jumlah', selectedJob.laki + perempuan);
+                            const updated = [...jobsData];
+                            updated[jobIndex] = { 
+                              ...updated[jobIndex], 
+                              perempuan: perempuan,
+                              jumlah: updated[jobIndex].laki + perempuan 
+                            };
+                            setJobsData(updated);
                           }}
                           className="mt-1"
                           placeholder="0"
@@ -611,8 +631,13 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
                         value={education.laki}
                         onChange={(e) => {
                           const laki = parseInt(e.target.value) || 0;
-                          updateEducation(index, 'laki', laki);
-                          updateEducation(index, 'jumlah', laki + education.perempuan);
+                          const updated = [...educationData];
+                          updated[index] = { 
+                            ...updated[index], 
+                            laki: laki,
+                            jumlah: laki + updated[index].perempuan 
+                          };
+                          setEducationData(updated);
                         }}
                         className="mt-1"
                       />
@@ -625,8 +650,13 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
                         value={education.perempuan}
                         onChange={(e) => {
                           const perempuan = parseInt(e.target.value) || 0;
-                          updateEducation(index, 'perempuan', perempuan);
-                          updateEducation(index, 'jumlah', education.laki + perempuan);
+                          const updated = [...educationData];
+                          updated[index] = { 
+                            ...updated[index], 
+                            perempuan: perempuan,
+                            jumlah: updated[index].laki + perempuan 
+                          };
+                          setEducationData(updated);
                         }}
                         className="mt-1"
                       />

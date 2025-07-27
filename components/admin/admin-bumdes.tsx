@@ -8,6 +8,17 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { 
   getBumdesData, 
   updateBumdesItem, 
@@ -271,27 +282,25 @@ export default function AdminBumdes({ onBack }: AdminBumdesProps) {
   }
 
   const handleDelete = async (id: number) => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus item BUMDes ini?")) {
-      try {
-        const success = await deleteBumdesItem(id)
-        if (success) {
-          // Refresh data setelah berhasil hapus
-          await fetchBumdesData()
-          toast({
-            title: "Berhasil",
-            description: "BUMDes berhasil dihapus",
-          })
-        } else {
-          throw new Error("Gagal menghapus data")
-        }
-      } catch (error) {
-        console.error('Error deleting BUMDes:', error)
+    try {
+      const success = await deleteBumdesItem(id)
+      if (success) {
+        // Refresh data setelah berhasil hapus
+        await fetchBumdesData()
         toast({
-          title: "Error",
-          description: error instanceof Error ? error.message : "Gagal menghapus BUMDes",
-          variant: "destructive"
+          title: "Berhasil",
+          description: "BUMDes berhasil dihapus",
         })
+      } else {
+        throw new Error("Gagal menghapus data")
       }
+    } catch (error) {
+      console.error('Error deleting BUMDes:', error)
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Gagal menghapus BUMDes",
+        variant: "destructive"
+      })
     }
   }
 
@@ -330,11 +339,16 @@ export default function AdminBumdes({ onBack }: AdminBumdesProps) {
             onClick={fetchBumdesData}
             variant="outline"
             disabled={loading}
+            className="hover:scale-105 hover:shadow-md transition-all duration-200 ease-in-out disabled:hover:scale-100"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
-          <Button onClick={onBack} variant="outline">
+          <Button 
+            onClick={onBack} 
+            variant="outline"
+            className="hover:scale-105 hover:shadow-md transition-all duration-200 ease-in-out"
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Kembali
           </Button>
@@ -344,7 +358,10 @@ export default function AdminBumdes({ onBack }: AdminBumdesProps) {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold"></h2>
-          <Button onClick={handleAddNew} className="flex items-center gap-2">
+          <Button 
+            onClick={handleAddNew} 
+            className="flex items-center gap-2 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-in-out"
+          >
             <Plus className="w-4 h-4" />
             Tambah BUMDes Baru
           </Button>
@@ -565,11 +582,19 @@ export default function AdminBumdes({ onBack }: AdminBumdesProps) {
             </div>
             
             <div className="flex justify-end gap-4">
-              <Button variant="outline" onClick={handleCancel}>
+              <Button 
+                variant="outline" 
+                onClick={handleCancel}
+                className="hover:scale-105 hover:shadow-md transition-all duration-200 ease-in-out"
+              >
                 <X className="w-4 h-4 mr-2" />
                 Batal
               </Button>
-              <Button onClick={handleSave} disabled={isUploading}>
+              <Button 
+                onClick={handleSave} 
+                disabled={isUploading}
+                className="hover:scale-105 hover:shadow-md transition-all duration-200 ease-in-out disabled:hover:scale-100"
+              >
                 {isUploading ? (
                   <>
                     <Upload className="w-4 h-4 mr-2 animate-spin" />
@@ -643,20 +668,46 @@ export default function AdminBumdes({ onBack }: AdminBumdesProps) {
                   onClick={() => handleEdit(item)}
                   variant="outline"
                   size="sm"
-                  className="flex-1"
+                  className="flex-1 hover:scale-105 hover:shadow-md transition-all duration-200 ease-in-out"
                 >
                   <Edit className="w-3 h-3 mr-1" />
                   Edit
                 </Button>
-                <Button 
-                  onClick={() => handleDelete(item.id)}
-                  variant="destructive"
-                  size="sm"
-                  className="flex-1"
-                >
-                  <Trash2 className="w-3 h-3 mr-1" />
-                  Hapus
-                </Button>
+                
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button 
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-400 hover:text-red-700 hover:scale-105 hover:shadow-md transition-all duration-200 ease-in-out dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950 dark:hover:border-red-600 dark:hover:text-red-300"
+                    >
+                      <Trash2 className="w-3 h-3 mr-1" />
+                      Hapus
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="text-gray-900 dark:text-gray-100">
+                        Konfirmasi Hapus
+                      </AlertDialogTitle>
+                      <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
+                        Apakah Anda yakin ingin menghapus BUMDes "{item.title}"? 
+                        Tindakan ini tidak dapat dibatalkan.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel className="bg-gray-100 hover:bg-gray-200 text-gray-900 border-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-100 dark:border-gray-600">
+                        Batal
+                      </AlertDialogCancel>
+                      <AlertDialogAction 
+                        onClick={() => handleDelete(item.id)}
+                        className="bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700"
+                      >
+                        Ya, Hapus
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </CardContent>
           </Card>
