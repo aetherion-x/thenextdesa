@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Lock, Users, BarChart3, Settings, Database, Shield, RefreshCw, Store } from "lucide-react";
+import { Lock, Users, BarChart3, Store } from "lucide-react";
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -228,18 +228,18 @@ export default function AdminPage() {
             </Card>
           </div>
 
-          {/* System Status */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* Quick Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center">
-                  <div className="p-3 bg-purple-100 dark:bg-purple-900 rounded-lg">
-                    <Database className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                  <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                    <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Status Database</p>
-                    <p className="text-lg font-semibold text-green-600 dark:text-green-400">
-                      Terhubung
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Penduduk</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                      2,847
                     </p>
                   </div>
                 </div>
@@ -249,12 +249,14 @@ export default function AdminPage() {
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center">
-                  <div className="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-lg">
-                    <RefreshCw className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+                  <div className="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
+                    <BarChart3 className="w-5 h-5 text-green-600 dark:text-green-400" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Sinkronisasi</p>
-                    <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">Real-time</p>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">APBD 2024</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                      2.1M
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -263,44 +265,68 @@ export default function AdminPage() {
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center">
-                  <div className="p-3 bg-red-100 dark:bg-red-900 rounded-lg">
-                    <Shield className="w-5 h-5 text-red-600 dark:text-red-400" />
+                  <div className="p-3 bg-orange-100 dark:bg-orange-900 rounded-lg">
+                    <Store className="w-5 h-5 text-orange-600 dark:text-orange-400" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Keamanan</p>
-                    <p className="text-lg font-semibold text-green-600 dark:text-green-400">Aktif</p>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Unit BUMDes</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                      5
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <div className="p-3 bg-purple-100 dark:bg-purple-900 rounded-lg">
+                    <BarChart3 className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Data Terbaru</p>
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                      Hari ini
+                    </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* System Information */}
+          {/* Quick Actions */}
           <Card>
             <CardHeader>
-              <CardTitle>Informasi Sistem</CardTitle>
-              <CardDescription>Detail konfigurasi dan struktur database</CardDescription>
+              <CardTitle>Aksi Cepat</CardTitle>
+              <CardDescription>Kelola data desa dengan mudah</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <h4 className="font-medium text-gray-900 dark:text-white">Database</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Platform: Firebase Firestore</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Struktur: Normalized Collections</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Update: Real-time synchronization</p>
-                </div>
-                <div className="space-y-2">
-                  <h4 className="font-medium text-gray-900 dark:text-white">Collections</h4>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                    <p>• demographics/population</p>
-                    <p>• demographics/religions</p>
-                    <p>• demographics/jobs</p>
-                    <p>• demographics/education</p>
-                    <p>• budget/revenue-2024</p>
-                    <p>• budget/expenditure-2024</p>
-                    <p>• budget/summary-2024</p>
-                  </div>
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Button 
+                  variant="outline" 
+                  className="h-16 flex flex-col items-center justify-center"
+                  onClick={() => setCurrentPage('demographics')}
+                >
+                  <Users className="w-5 h-5 mb-2" />
+                  <span>Update Kependudukan</span>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="h-16 flex flex-col items-center justify-center"
+                  onClick={() => setCurrentPage('budget')}
+                >
+                  <BarChart3 className="w-5 h-5 mb-2" />
+                  <span>Kelola APBD</span>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="h-16 flex flex-col items-center justify-center"
+                  onClick={() => setCurrentPage('bumdes')}
+                >
+                  <Store className="w-5 h-5 mb-2" />
+                  <span>Manajemen BUMDes</span>
+                </Button>
               </div>
             </CardContent>
           </Card>
