@@ -1,7 +1,7 @@
 import { Suspense } from "react"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-import NewsContent from "@/components/news/news-content"
+import BumdesContent from "@/components/bumdes/bumdes-content"
 import LoadingSpinner from "@/components/loading-spinner"
 
 export const metadata = {
@@ -22,7 +22,7 @@ export default function BumdesPage() {
         </section>
 
         <Suspense fallback={<LoadingSpinner />}>
-          <NewsContent />
+          <BumdesContent />
         </Suspense>
       </main>
       <Footer />

@@ -1,0 +1,46 @@
+{
+  "bumdes": [
+    {
+      "id": 1,
+      "title": "Toko Sembako Desa Makmur",
+      "description": "Toko sembako yang menyediakan kebutuhan sehari-hari masyarakat desa dengan harga terjangkau dan kualitas terbaik.",
+      "content": "Toko Sembako Desa Makmur merupakan salah satu unit usaha BUMDes yang bergerak di bidang penjualan kebutuhan pokok masyarakat. Toko ini menyediakan berbagai macam sembako seperti beras, minyak goreng, gula, teh, kopi, dan kebutuhan rumah tangga lainnya. Dengan sistem manajemen yang baik dan harga yang kompetitif, toko ini telah menjadi pilihan utama masyarakat desa untuk berbelanja kebutuhan sehari-hari. Keuntungan dari usaha ini digunakan untuk mengembangkan desa dan meningkatkan kesejahteraan masyarakat.",
+      "image": "/assets/img/desa.jpg",
+      "category": "Perdagangan",
+      "status": "Aktif",
+      "established": "2022-03-15",
+      "manager": "Ibu Siti Rahayu",
+      "revenue": 150000000,
+      "employees": 3,
+      "location": "Jl. Raya Desa No. 12"
+    },
+    {
+      "id": 2,
+      "title": "Usaha Air Minum Isi Ulang",
+      "description": "Penyediaan air minum isi ulang berkualitas tinggi dengan teknologi penyaringan modern untuk masyarakat desa.",
+      "content": "Usaha Air Minum Isi Ulang merupakan unit usaha BUMDes yang menyediakan air minum bersih dan sehat untuk masyarakat desa. Menggunakan teknologi penyaringan reverse osmosis dan sterilisasi UV, air yang diproduksi telah memenuhi standar kesehatan dan aman untuk dikonsumsi. Usaha ini tidak hanya melayani kebutuhan air minum masyarakat desa, tetapi juga menjangkau desa-desa tetangga. Dengan harga yang terjangkau, usaha ini membantu masyarakat mendapatkan akses air minum berkualitas.",
+      "image": "/assets/img/desa.jpg",
+      "category": "Pelayanan",
+      "status": "Aktif",
+      "established": "2021-08-20",
+      "manager": "Bapak Ahmad Susanto",
+      "revenue": 85000000,
+      "employees": 2,
+      "location": "Jl. Masjid No. 5"
+    },
+    {
+      "id": 3,
+      "title": "Kelompok Ternak Sapi",
+      "description": "Usaha peternakan sapi yang dikelola secara kolektif untuk meningkatkan pendapatan masyarakat desa.",
+      "content": "Kelompok Ternak Sapi merupakan unit usaha BUMDes yang fokus pada pengembangan peternakan sapi potong dan sapi perah. Dengan sistem kandang komunal dan manajemen modern, usaha ini telah berhasil meningkatkan produktivitas ternak dan pendapatan peternak. Program ini juga menyediakan pelatihan teknis bagi peternak lokal dan bantuan modal untuk pengembangan usaha. Hasil dari usaha ini meliputi penjualan sapi, susu segar, dan pupuk organik dari kotoran ternak.",
+      "image": "/assets/img/desa.jpg",
+      "category": "Peternakan",
+      "status": "Aktif",
+      "established": "2020-12-10",
+      "manager": "Bapak Sukamto",
+      "revenue": 200000000,
+      "employees": 5,
+      "location": "Dusun Krajan RT 02 RW 01"
+    }
+  ]
+}
