@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Save, RefreshCw } from "lucide-react";
+import { ArrowLeft, Save, RefreshCw, Users, Heart, Briefcase, GraduationCap } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   getPopulationData,
@@ -151,7 +151,7 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
     setPopulationData({
       ...populationData,
       [field]: value,
-      total: field === 'male' ? value + populationData.female : populationData.male + value
+      jumlah: field === 'male' ? value + populationData.female : populationData.male + value
     });
   };
 
@@ -176,7 +176,7 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
       </div>
     );
   }
@@ -186,7 +186,9 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Kependudukan</h1>
-          <p className="text-gray-600 dark:text-gray-400">Kelola data demografis desa</p>
+          <p className="text-gray-600 dark:text-gray-400">
+            Kelola data demografis desa 
+          </p>
         </div>
         <div className="flex gap-3">
           <Button onClick={loadData} variant="outline">
@@ -207,19 +209,55 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
         }} 
         className="w-full"
       >
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="population">Populasi</TabsTrigger>
-          <TabsTrigger value="religion">Agama</TabsTrigger>
-          <TabsTrigger value="jobs">Pekerjaan</TabsTrigger>
-          <TabsTrigger value="education">Pendidikan</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+          <TabsTrigger 
+            value="population"
+            className="relative data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-sm hover:bg-green-50 hover:text-green-600 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-green-400 dark:hover:bg-gray-700 dark:hover:text-green-400 transition-all duration-200 font-medium"
+          >
+            <Users className="w-4 h-4 mr-2" />
+            Populasi
+            {activeTab === "population" && (
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-green-600 dark:bg-green-400 rounded-full"></div>
+            )}
+          </TabsTrigger>
+          <TabsTrigger 
+            value="religion"
+            className="relative data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-sm hover:bg-green-50 hover:text-green-600 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-green-400 dark:hover:bg-gray-700 dark:hover:text-green-400 transition-all duration-200 font-medium"
+          >
+            <Heart className="w-4 h-4 mr-2" />
+            Agama
+            {activeTab === "religion" && (
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-green-600 dark:bg-green-400 rounded-full"></div>
+            )}
+          </TabsTrigger>
+          <TabsTrigger 
+            value="jobs"
+            className="relative data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-sm hover:bg-green-50 hover:text-green-600 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-green-400 dark:hover:bg-gray-700 dark:hover:text-green-400 transition-all duration-200 font-medium"
+          >
+            <Briefcase className="w-4 h-4 mr-2" />
+            Pekerjaan
+            {activeTab === "jobs" && (
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-green-600 dark:bg-green-400 rounded-full"></div>
+            )}
+          </TabsTrigger>
+          <TabsTrigger 
+            value="education"
+            className="relative data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-sm hover:bg-green-50 hover:text-green-600 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-green-400 dark:hover:bg-gray-700 dark:hover:text-green-400 transition-all duration-200 font-medium"
+          >
+            <GraduationCap className="w-4 h-4 mr-2" />
+            Pendidikan
+            {activeTab === "education" && (
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-green-600 dark:bg-green-400 rounded-full"></div>
+            )}
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="population">
-          <Card>
+        <TabsContent value="population" className="mt-6 animate-in fade-in-50 duration-200">
+          <Card className="border-l-4 border-l-green-600 dark:border-l-green-400 shadow-lg hover:shadow-xl transition-shadow duration-200">
             <CardHeader>
               <div className="flex justify-between items-center">
                 <div>
-                  <CardTitle>Data Populasi</CardTitle>
+                  <CardTitle className="text-green-700 dark:text-green-300">Data Populasi</CardTitle>
                   <CardDescription>Kelola data jumlah penduduk berdasarkan jenis kelamin</CardDescription>
                 </div>
                 <Button onClick={handlePopulationSave} className="bg-green-600 hover:bg-green-700">
@@ -261,9 +299,9 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
                     />
                   </div>
                   <div>
-                    <Label>Total</Label>
+                    <Label>Jumlah</Label>
                     <Input
-                      value={populationData.total}
+                      value={populationData.jumlah}
                       disabled
                       className="mt-1 bg-gray-100 dark:bg-gray-800"
                     />
@@ -274,12 +312,12 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
           </Card>
         </TabsContent>
 
-        <TabsContent value="religion">
-          <Card>
+        <TabsContent value="religion" className="mt-6 animate-in fade-in-50 duration-200">
+          <Card className="border-l-4 border-l-green-600 dark:border-l-green-400 shadow-lg hover:shadow-xl transition-shadow duration-200">
             <CardHeader>
               <div className="flex justify-between items-center">
                 <div>
-                  <CardTitle>Data Agama</CardTitle>
+                  <CardTitle className="text-green-700 dark:text-green-300">Data Agama</CardTitle>
                   <CardDescription>Kelola data penduduk berdasarkan agama</CardDescription>
                 </div>
                 <Button onClick={handleReligionSave} className="bg-green-600 hover:bg-green-700">
@@ -300,34 +338,52 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
               
               <div className="grid gap-4">
                 {religionsData.map((religion, index) => (
-                  <div key={religion.id} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-lg">
+                  <div key={religion.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border rounded-lg">
                     <div>
-                      <Label htmlFor={`religion-name-${index}`}>Nama Agama</Label>
+                      <Label htmlFor={`religion-agama-${index}`}>Agama</Label>
                       <Input
-                        id={`religion-name-${index}`}
-                        value={religion.name}
-                        onChange={(e) => updateReligion(index, 'name', e.target.value)}
+                        id={`religion-agama-${index}`}
+                        value={religion.agama}
+                        onChange={(e) => updateReligion(index, 'agama', e.target.value)}
                         className="mt-1"
                       />
                     </div>
                     <div>
-                      <Label htmlFor={`religion-count-${index}`}>Jumlah</Label>
+                      <Label htmlFor={`religion-laki-${index}`}>Laki-laki</Label>
                       <Input
-                        id={`religion-count-${index}`}
+                        id={`religion-laki-${index}`}
                         type="number"
-                        value={religion.count}
-                        onChange={(e) => updateReligion(index, 'count', parseInt(e.target.value) || 0)}
+                        value={religion.laki}
+                        onChange={(e) => {
+                          const laki = parseInt(e.target.value) || 0;
+                          updateReligion(index, 'laki', laki);
+                          updateReligion(index, 'jumlah', laki + religion.perempuan);
+                        }}
                         className="mt-1"
                       />
                     </div>
                     <div>
-                      <Label htmlFor={`religion-icon-${index}`}>Icon</Label>
+                      <Label htmlFor={`religion-perempuan-${index}`}>Perempuan</Label>
                       <Input
-                        id={`religion-icon-${index}`}
-                        value={religion.icon}
-                        onChange={(e) => updateReligion(index, 'icon', e.target.value)}
+                        id={`religion-perempuan-${index}`}
+                        type="number"
+                        value={religion.perempuan}
+                        onChange={(e) => {
+                          const perempuan = parseInt(e.target.value) || 0;
+                          updateReligion(index, 'perempuan', perempuan);
+                          updateReligion(index, 'jumlah', religion.laki + perempuan);
+                        }}
                         className="mt-1"
-                        placeholder="fa-moon"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`religion-jumlah-${index}`}>Jumlah</Label>
+                      <Input
+                        id={`religion-jumlah-${index}`}
+                        type="number"
+                        value={religion.jumlah}
+                        disabled
+                        className="mt-1 bg-gray-100 dark:bg-gray-800"
                       />
                     </div>
                   </div>
@@ -337,12 +393,12 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
           </Card>
         </TabsContent>
 
-        <TabsContent value="jobs">
-          <Card>
+        <TabsContent value="jobs" className="mt-6 animate-in fade-in-50 duration-200">
+          <Card className="border-l-4 border-l-green-600 dark:border-l-green-400 shadow-lg hover:shadow-xl transition-shadow duration-200">
             <CardHeader>
               <div className="flex justify-between items-center">
                 <div>
-                  <CardTitle>Data Pekerjaan</CardTitle>
+                  <CardTitle className="text-green-700 dark:text-green-300">Data Pekerjaan</CardTitle>
                   <CardDescription>Kelola data penduduk berdasarkan jenis pekerjaan</CardDescription>
                 </div>
                 <Button onClick={handleJobSave} className="bg-green-600 hover:bg-green-700">
@@ -363,9 +419,9 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
               
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {jobsData.map((job, index) => (
-                  <div key={job.id} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-lg">
+                  <div key={job.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border rounded-lg">
                     <div>
-                      <Label htmlFor={`job-name-${index}`}>Jenis Pekerjaan</Label>
+                      <Label htmlFor={`job-name-${index}`}>Pekerjaan</Label>
                       <Input
                         id={`job-name-${index}`}
                         value={job.pekerjaan}
@@ -379,7 +435,11 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
                         id={`job-male-${index}`}
                         type="number"
                         value={job.laki}
-                        onChange={(e) => updateJob(index, 'laki', parseInt(e.target.value) || 0)}
+                        onChange={(e) => {
+                          const laki = parseInt(e.target.value) || 0;
+                          updateJob(index, 'laki', laki);
+                          updateJob(index, 'jumlah', laki + job.perempuan);
+                        }}
                         className="mt-1"
                       />
                     </div>
@@ -389,8 +449,22 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
                         id={`job-female-${index}`}
                         type="number"
                         value={job.perempuan}
-                        onChange={(e) => updateJob(index, 'perempuan', parseInt(e.target.value) || 0)}
+                        onChange={(e) => {
+                          const perempuan = parseInt(e.target.value) || 0;
+                          updateJob(index, 'perempuan', perempuan);
+                          updateJob(index, 'jumlah', job.laki + perempuan);
+                        }}
                         className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`job-jumlah-${index}`}>Jumlah</Label>
+                      <Input
+                        id={`job-jumlah-${index}`}
+                        type="number"
+                        value={job.jumlah}
+                        disabled
+                        className="mt-1 bg-gray-100 dark:bg-gray-800"
                       />
                     </div>
                   </div>
@@ -400,12 +474,12 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
           </Card>
         </TabsContent>
 
-        <TabsContent value="education">
-          <Card>
+        <TabsContent value="education" className="mt-6 animate-in fade-in-50 duration-200">
+          <Card className="border-l-4 border-l-green-600 dark:border-l-green-400 shadow-lg hover:shadow-xl transition-shadow duration-200">
             <CardHeader>
               <div className="flex justify-between items-center">
                 <div>
-                  <CardTitle>Data Pendidikan</CardTitle>
+                  <CardTitle className="text-green-700 dark:text-green-300">Data Pendidikan</CardTitle>
                   <CardDescription>Kelola data penduduk berdasarkan tingkat pendidikan</CardDescription>
                 </div>
                 <Button onClick={handleEducationSave} className="bg-green-600 hover:bg-green-700">
@@ -426,24 +500,52 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
               
               <div className="grid gap-4">
                 {educationData.map((education, index) => (
-                  <div key={education.id} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border rounded-lg">
+                  <div key={education.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border rounded-lg">
                     <div>
                       <Label htmlFor={`education-level-${index}`}>Tingkat Pendidikan</Label>
                       <Input
                         id={`education-level-${index}`}
-                        value={education.level}
-                        onChange={(e) => updateEducation(index, 'level', e.target.value)}
+                        value={education.tingkat_pendidikan}
+                        onChange={(e) => updateEducation(index, 'tingkat_pendidikan', e.target.value)}
                         className="mt-1"
                       />
                     </div>
                     <div>
-                      <Label htmlFor={`education-count-${index}`}>Jumlah</Label>
+                      <Label htmlFor={`education-laki-${index}`}>Laki-laki</Label>
                       <Input
-                        id={`education-count-${index}`}
+                        id={`education-laki-${index}`}
                         type="number"
-                        value={education.count}
-                        onChange={(e) => updateEducation(index, 'count', parseInt(e.target.value) || 0)}
+                        value={education.laki}
+                        onChange={(e) => {
+                          const laki = parseInt(e.target.value) || 0;
+                          updateEducation(index, 'laki', laki);
+                          updateEducation(index, 'jumlah', laki + education.perempuan);
+                        }}
                         className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`education-perempuan-${index}`}>Perempuan</Label>
+                      <Input
+                        id={`education-perempuan-${index}`}
+                        type="number"
+                        value={education.perempuan}
+                        onChange={(e) => {
+                          const perempuan = parseInt(e.target.value) || 0;
+                          updateEducation(index, 'perempuan', perempuan);
+                          updateEducation(index, 'jumlah', education.laki + perempuan);
+                        }}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`education-jumlah-${index}`}>Jumlah</Label>
+                      <Input
+                        id={`education-jumlah-${index}`}
+                        type="number"
+                        value={education.jumlah}
+                        disabled
+                        className="mt-1 bg-gray-100 dark:bg-gray-800"
                       />
                     </div>
                   </div>

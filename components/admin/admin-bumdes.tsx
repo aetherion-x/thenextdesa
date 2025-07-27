@@ -32,13 +32,18 @@ import {
   Users,
   DollarSign,
   Building2,
-  RefreshCw
+  RefreshCw,
+  ArrowLeft
 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import LoadingSpinner from "@/components/loading-spinner"
 import Image from "next/image"
 
-export default function AdminBumdes() {
+interface AdminBumdesProps {
+  onBack: () => void;
+}
+
+export default function AdminBumdes({ onBack }: AdminBumdesProps) {
   const [bumdesData, setBumdesData] = useState<BumdesItem[]>([])
   const [loading, setLoading] = useState(true)
   const [editingItem, setEditingItem] = useState<BumdesItem | null>(null)
@@ -314,25 +319,36 @@ export default function AdminBumdes() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Manajemen BUMDes</h2>
-        <div className="flex gap-2">
+    <div className="max-w-7xl mx-auto p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin BUMDes</h1>
+          <p className="text-gray-600 dark:text-gray-400">Kelola data Badan Usaha Milik Desa</p>
+        </div>
+        <div className="flex gap-3">
           <Button 
             onClick={fetchBumdesData}
             variant="outline"
             disabled={loading}
-            className="flex items-center gap-2"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
+          <Button onClick={onBack} variant="outline">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Kembali
+          </Button>
+        </div>
+      </div>
+
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold"></h2>
           <Button onClick={handleAddNew} className="flex items-center gap-2">
             <Plus className="w-4 h-4" />
             Tambah BUMDes Baru
           </Button>
         </div>
-      </div>
 
       {/* Form Edit/Add */}
       {(editingItem || isAddingNew) && (
@@ -646,6 +662,7 @@ export default function AdminBumdes() {
           </Card>
         ))}
       </div>
+    </div>
     </div>
   )
 }

@@ -11,7 +11,7 @@ import {
 
 // Interface untuk data populasi
 export interface PopulationData {
-  total: number;
+  jumlah: number;
   male: number;
   female: number;
   lastUpdated: Date;
@@ -20,8 +20,10 @@ export interface PopulationData {
 // Interface untuk data agama
 export interface ReligionData {
   id: string;
-  name: string;
-  count: number;
+  agama: string;
+  laki: number;
+  perempuan: number;
+  jumlah: number;
   icon: string;
 }
 
@@ -31,13 +33,16 @@ export interface JobData {
   pekerjaan: string;
   laki: number;
   perempuan: number;
+  jumlah: number;
 }
 
 // Interface untuk data pendidikan
 export interface EducationData {
   id: string;
-  level: string;
-  count: number;
+  tingkat_pendidikan: string;
+  laki: number;
+  perempuan: number;
+  jumlah: number;
 }
 
 // Konstanta untuk collection names
@@ -58,7 +63,7 @@ export const getPopulationData = async (): Promise<PopulationData | null> => {
     if (docSnap.exists()) {
       const data = docSnap.data();
       return {
-        total: data.total,
+        jumlah: data.jumlah,
         male: data.male,
         female: data.female,
         lastUpdated: data.lastUpdated?.toDate() || new Date()
@@ -74,11 +79,11 @@ export const getPopulationData = async (): Promise<PopulationData | null> => {
 // Fungsi untuk update data populasi
 export const updatePopulationData = async (male: number, female: number): Promise<boolean> => {
   try {
-    const total = male + female;
+    const jumlah = male + female;
     const docRef = doc(db, DEMOGRAPHICS_COLLECTION, POPULATION_DOC);
     
     await setDoc(docRef, {
-      total,
+      jumlah,
       male,
       female,
       lastUpdated: new Date()
@@ -100,7 +105,7 @@ export const subscribeToPopulationData = (
     if (doc.exists()) {
       const data = doc.data();
       callback({
-        total: data.total,
+        jumlah: data.jumlah,
         male: data.male,
         female: data.female,
         lastUpdated: data.lastUpdated?.toDate() || new Date()
@@ -266,7 +271,21 @@ export const subscribeToEducationData = (
 
 // === INITIALIZATION FUNCTIONS ===
 
-// Fungsi untuk inisialisasi data default
+// Helper function untuk generate random number dalam range
+const randomInRange = (min: number, max: number): number => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+// Helper function untuk split number menjadi laki-perempuan secara realistic
+const splitGender = (total: number): { laki: number; perempuan: number } => {
+  // Distribusi gender realistic: 45-55% untuk masing-masing
+  const maleRatio = 0.45 + Math.random() * 0.1; // 45-55%
+  const laki = Math.floor(total * maleRatio);
+  const perempuan = total - laki;
+  return { laki, perempuan };
+};
+
+// Fungsi untuk inisialisasi data default dengan data random
 export const initializeDemographicData = async (): Promise<void> => {
   try {
     // Check if data already exists before initializing
@@ -278,143 +297,161 @@ export const initializeDemographicData = async (): Promise<void> => {
       return;
     }
 
-    console.log('Initializing demographic data with default values...');
+    console.log('Initializing demographic data with random values...');
+
+    // Generate base population data
+    const totalPopulation = randomInRange(8000, 9000);
+    const { laki: totalMale, perempuan: totalFemale } = splitGender(totalPopulation);
 
     // Initialize population data
-    await updatePopulationData(4216, 4213);
+    await updatePopulationData(totalMale, totalFemale);
 
-    // Initialize religions data
+    // Initialize religions data with realistic proportions
+    const religionsTotal = totalPopulation;
+    const islamTotal = Math.floor(religionsTotal * (0.85 + Math.random() * 0.1)); // 85-95%
+    const remainingPopulation = religionsTotal - islamTotal;
+    
     const defaultReligions: ReligionData[] = [
-      { id: 'islam', name: 'Islam', count: 8320, icon: 'fa-moon' },
-      { id: 'kristen', name: 'Kristen', count: 80, icon: 'fa-cross' },
-      { id: 'katolik', name: 'Katolik', count: 15, icon: 'fa-cross' },
-      { id: 'hindu', name: 'Hindu', count: 10, icon: 'fa-dharmachakra' },
-      { id: 'buddha', name: 'Buddha', count: 4, icon: 'fa-dharmachakra' },
-      { id: 'khonghucu', name: 'Khonghucu', count: 4, icon: 'fa-dharmachakra' },
-      { id: 'kepercayaan', name: 'Kepercayaan', count: 4, icon: 'fa-dharmachakra' },
+      { 
+        id: 'islam', 
+        agama: 'Islam', 
+        ...splitGender(islamTotal),
+        jumlah: islamTotal,
+        icon: 'fa-moon' 
+      },
+      { 
+        id: 'kristen', 
+        agama: 'Kristen', 
+        ...splitGender(Math.floor(remainingPopulation * 0.4)),
+        jumlah: 0,
+        icon: 'fa-cross' 
+      },
+      { 
+        id: 'katolik', 
+        agama: 'Katolik', 
+        ...splitGender(Math.floor(remainingPopulation * 0.3)),
+        jumlah: 0,
+        icon: 'fa-cross' 
+      },
+      { 
+        id: 'hindu', 
+        agama: 'Hindu', 
+        ...splitGender(Math.floor(remainingPopulation * 0.15)),
+        jumlah: 0,
+        icon: 'fa-om' 
+      },
+      { 
+        id: 'buddha', 
+        agama: 'Buddha', 
+        ...splitGender(Math.floor(remainingPopulation * 0.1)),
+        jumlah: 0,
+        icon: 'fa-dharmachakra' 
+      },
+      { 
+        id: 'khonghucu', 
+        agama: 'Khonghucu', 
+        ...splitGender(Math.floor(remainingPopulation * 0.03)),
+        jumlah: 0,
+        icon: 'fa-yin-yang' 
+      },
+      { 
+        id: 'kepercayaan', 
+        agama: 'Kepercayaan', 
+        ...splitGender(Math.floor(remainingPopulation * 0.02)),
+        jumlah: 0,
+        icon: 'fa-pray' 
+      },
     ];
+
+    // Calculate jumlah for each religion
+    defaultReligions.forEach(religion => {
+      religion.jumlah = religion.laki + religion.perempuan;
+    });
+
     await updateReligionsData(defaultReligions);
 
-// Initialize jobs data with proper IDs
-const defaultJobs: JobData[] = [
-  { id: 'belum-tidak-bekerja', pekerjaan: 'BELUM/TIDAK BEKERJA', laki: 521, perempuan: 678 },
-  { id: 'mengurus-rumah-tangga', pekerjaan: 'MENGURUS RUMAH TANGGA', laki: 25, perempuan: 1987 },
-  { id: 'pelajar-mahasiswa', pekerjaan: 'PELAJAR/MAHASISWA', laki: 812, perempuan: 799 },
-  { id: 'pensiunan', pekerjaan: 'PENSIUNAN', laki: 210, perempuan: 154 },
-  { id: 'pegawai-negeri-sipil-pns', pekerjaan: 'PEGAWAI NEGERI SIPIL (PNS)', laki: 450, perempuan: 465 },
-  { id: 'tentara-nasional-indonesia', pekerjaan: 'TENTARA NASIONAL INDONESIA', laki: 780, perempuan: 35 },
-  { id: 'kepolisian-ri-polri', pekerjaan: 'KEPOLISIAN RI (POLRI)', laki: 698, perempuan: 52 },
-  { id: 'perdagangan', pekerjaan: 'PERDAGANGAN', laki: 312, perempuan: 405 },
-  { id: 'petani-pekebun', pekerjaan: 'PETANI/PEKEBUN', laki: 1150, perempuan: 320 },
-  { id: 'peternak', pekerjaan: 'PETERNAK', laki: 250, perempuan: 88 },
-  { id: 'nelayan-perikanan', pekerjaan: 'NELAYAN/PERIKANAN', laki: 310, perempuan: 45 },
-  { id: 'industri', pekerjaan: 'INDUSTRI', laki: 421, perempuan: 211 },
-  { id: 'konstruksi', pekerjaan: 'KONSTRUKSI', laki: 512, perempuan: 28 },
-  { id: 'transportasi', pekerjaan: 'TRANSPORTASI', laki: 388, perempuan: 41 },
-  { id: 'karyawan-swasta', pekerjaan: 'KARYAWAN SWASTA', laki: 987, perempuan: 754 },
-  { id: 'karyawan-bumn', pekerjaan: 'KARYAWAN BUMN', laki: 345, perempuan: 210 },
-  { id: 'karyawan-bumd', pekerjaan: 'KARYAWAN BUMD', laki: 210, perempuan: 150 },
-  { id: 'karyawan-honorer', pekerjaan: 'KARYAWAN HONORER', laki: 180, perempuan: 240 },
-  { id: 'buruh-harian-lepas', pekerjaan: 'BURUH HARIAN LEPAS', laki: 412, perempuan: 189 },
-  { id: 'buruh-tani-perkebunan', pekerjaan: 'BURUH TANI/PERKEBUNAN', laki: 311, perempuan: 122 },
-  { id: 'buruh-nelayan-perikanan', pekerjaan: 'BURUH NELAYAN/PERIKANAN', laki: 155, perempuan: 33 },
-  { id: 'buruh-peternakan', pekerjaan: 'BURUH PETERNAKAN', laki: 98, perempuan: 41 },
-  { id: 'pembantu-rumah-tangga', pekerjaan: 'PEMBANTU RUMAH TANGGA', laki: 15, perempuan: 321 },
-  { id: 'tukang-cukur', pekerjaan: 'TUKANG CUKUR', laki: 110, perempuan: 12 },
-  { id: 'tukang-listrik', pekerjaan: 'TUKANG LISTRIK', laki: 95, perempuan: 5 },
-  { id: 'tukang-batu', pekerjaan: 'TUKANG BATU', laki: 215, perempuan: 3 },
-  { id: 'tukang-kayu', pekerjaan: 'TUKANG KAYU', laki: 180, perempuan: 4 },
-  { id: 'tukang-sol-sepatu', pekerjaan: 'TUKANG SOL SEPATU', laki: 65, perempuan: 8 },
-  { id: 'tukang-las-pandai-besi', pekerjaan: 'TUKANG LAS/PANDAI BESI', laki: 143, perempuan: 2 },
-  { id: 'tukang-jahit', pekerjaan: 'TUKANG JAHIT', laki: 55, perempuan: 189 },
-  { id: 'tukang-gigi', pekerjaan: 'TUKANG GIGI', laki: 32, perempuan: 21 },
-  { id: 'penata-rias', pekerjaan: 'PENATA RIAS', laki: 10, perempuan: 150 },
-  { id: 'penata-busana', pekerjaan: 'PENATA BUSANA', laki: 12, perempuan: 98 },
-  { id: 'penata-rambut', pekerjaan: 'PENATA RAMBUT', laki: 28, perempuan: 112 },
-  { id: 'mekanik', pekerjaan: 'MEKANIK', laki: 234, perempuan: 11 },
-  { id: 'seniman', pekerjaan: 'SENIMAN', laki: 88, perempuan: 76 },
-  { id: 'tabib', pekerjaan: 'TABIB', laki: 45, perempuan: 23 },
-  { id: 'paraji', pekerjaan: 'PARAJI', laki: 2, perempuan: 55 },
-  { id: 'perancang-busana', pekerjaan: 'PERANCANG BUSANA', laki: 15, perempuan: 88 },
-  { id: 'penterjemah', pekerjaan: 'PENTERJEMAH', laki: 41, perempuan: 56 },
-  { id: 'imam-masjid', pekerjaan: 'IMAM MASJID', laki: 78, perempuan: 0 },
-  { id: 'pendeta', pekerjaan: 'PENDETA', laki: 65, perempuan: 10 },
-  { id: 'pastor', pekerjaan: 'PASTOR', laki: 50, perempuan: 0 },
-  { id: 'wartawan', pekerjaan: 'WARTAWAN', laki: 110, perempuan: 85 },
-  { id: 'ustadz-mubaligh', pekerjaan: 'USTADZ/MUBALIGH', laki: 123, perempuan: 21 },
-  { id: 'juru-masak', pekerjaan: 'JURU MASAK', laki: 88, perempuan: 167 },
-  { id: 'promotor-acara', pekerjaan: 'PROMOTOR ACARA', laki: 32, perempuan: 41 },
-  { id: 'anggota-dpr-ri', pekerjaan: 'ANGGOTA DPR RI', laki: 3, perempuan: 2 },
-  { id: 'anggota-dpd-ri', pekerjaan: 'ANGGOTA DPD RI', laki: 2, perempuan: 1 },
-  { id: 'anggota-bpk', pekerjaan: 'ANGGOTA BPK', laki: 4, perempuan: 1 },
-  { id: 'presiden', pekerjaan: 'PRESIDEN', laki: 1, perempuan: 0 },
-  { id: 'wakil-presiden', pekerjaan: 'WAKIL PRESIDEN', laki: 1, perempuan: 0 },
-  { id: 'anggota-mahkamah-konstitusi', pekerjaan: 'ANGGOTA MAHKAMAH KONSTITUSI', laki: 5, perempuan: 2 },
-  { id: 'anggota-kabinet-kementrian', pekerjaan: 'ANGGOTA KABINET KEMENTRIAN', laki: 20, perempuan: 8 },
-  { id: 'duta-besar', pekerjaan: 'DUTA BESAR', laki: 15, perempuan: 7 },
-  { id: 'gubernur', pekerjaan: 'GUBERNUR', laki: 1, perempuan: 0 },
-  { id: 'wakil-gubernur', pekerjaan: 'WAKIL GUBERNUR', laki: 1, perempuan: 0 },
-  { id: 'bupati', pekerjaan: 'BUPATI', laki: 1, perempuan: 0 },
-  { id: 'wakil-bupati', pekerjaan: 'WAKIL BUPATI', laki: 1, perempuan: 0 },
-  { id: 'walikota', pekerjaan: 'WALIKOTA', laki: 1, perempuan: 0 },
-  { id: 'wakil-walikota', pekerjaan: 'WAKIL WALIKOTA', laki: 1, perempuan: 0 },
-  { id: 'anggota-dprd-prop', pekerjaan: 'ANGGOTA DPRD PROP.', laki: 25, perempuan: 10 },
-  { id: 'anggota-dprd-kab-kota', pekerjaan: 'ANGGOTA DPRD KAB./KOTA', laki: 30, perempuan: 15 },
-  { id: 'dosen', pekerjaan: 'DOSEN', laki: 150, perempuan: 165 },
-  { id: 'guru', pekerjaan: 'GURU', laki: 450, perempuan: 890 },
-  { id: 'pilot', pekerjaan: 'PILOT', laki: 88, perempuan: 9 },
-  { id: 'pengacara', pekerjaan: 'PENGACARA', laki: 120, perempuan: 65 },
-  { id: 'notaris', pekerjaan: 'NOTARIS', laki: 55, perempuan: 95 },
-  { id: 'arsitek', pekerjaan: 'ARSITEK', laki: 95, perempuan: 60 },
-  { id: 'akuntan', pekerjaan: 'AKUNTAN', laki: 110, perempuan: 130 },
-  { id: 'konsultan', pekerjaan: 'KONSULTAN', laki: 98, perempuan: 77 },
-  { id: 'dokter', pekerjaan: 'DOKTER', laki: 210, perempuan: 245 },
-  { id: 'bidan', pekerjaan: 'BIDAN', laki: 5, perempuan: 310 },
-  { id: 'perawat', pekerjaan: 'PERAWAT', laki: 150, perempuan: 450 },
-  { id: 'apoteker', pekerjaan: 'APOTEKER', laki: 45, perempuan: 180 },
-  { id: 'psikiater-psikolog', pekerjaan: 'PSIKIATER/PSIKOLOG', laki: 35, perempuan: 85 },
-  { id: 'penyiar-televisi', pekerjaan: 'PENYIAR TELEVISI', laki: 25, perempuan: 35 },
-  { id: 'penyiar-radio', pekerjaan: 'PENYIAR RADIO', laki: 30, perempuan: 40 },
-  { id: 'pelaut', pekerjaan: 'PELAUT', laki: 220, perempuan: 15 },
-  { id: 'peneliti', pekerjaan: 'PENELITI', laki: 80, perempuan: 95 },
-  { id: 'sopir', pekerjaan: 'SOPIR', laki: 350, perempuan: 10 },
-  { id: 'pialang', pekerjaan: 'PIALANG', laki: 40, perempuan: 30 },
-  { id: 'paranormal', pekerjaan: 'PARANORMAL', laki: 25, perempuan: 10 },
-  { id: 'pedagang', pekerjaan: 'PEDAGANG', laki: 650, perempuan: 720 },
-  { id: 'perangkat-desa', pekerjaan: 'PERANGKAT DESA', laki: 15, perempuan: 8 },
-  { id: 'kepala-desa', pekerjaan: 'KEPALA DESA', laki: 1, perempuan: 0 },
-  { id: 'biarawan-biarawati', pekerjaan: 'BIARAWAN/BIARAWATI', laki: 20, perempuan: 45 },
-  { id: 'wiraswasta', pekerjaan: 'WIRASWASTA', laki: 850, perempuan: 450 },
-  { id: 'anggota-lemb-tinggi-lainnya', pekerjaan: 'ANGGOTA LEMB. TINGGI LAINNYA', laki: 50, perempuan: 20 },
-  { id: 'artis', pekerjaan: 'ARTIS', laki: 60, perempuan: 80 },
-  { id: 'atlit', pekerjaan: 'ATLIT', laki: 120, perempuan: 50 },
-  { id: 'cheff', pekerjaan: 'CHEFF', laki: 90, perempuan: 70 }, // Ejaan umum 'Chef'
-  { id: 'manajer', pekerjaan: 'MANAJER', laki: 250, perempuan: 180 },
-  { id: 'tenaga-tata-usaha', pekerjaan: 'TENAGA TATA USAHA', laki: 80, perempuan: 250 },
-  { id: 'operator', pekerjaan: 'OPERATOR', laki: 180, perempuan: 120 },
-  { id: 'pekerja-pengolahan-kerajinan', pekerjaan: 'PEKERJA PENGOLAHAN KERAJINAN', laki: 40, perempuan: 160 },
-  { id: 'teknisi', pekerjaan: 'TEKNISI', laki: 280, perempuan: 30 },
-  { id: 'asisten-ahli', pekerjaan: 'ASISTEN AHLI', laki: 70, perempuan: 90 },
-  { id: 'pekerjaan-lainnya', pekerjaan: 'PEKERJAAN LAINNYA', laki: 310, perempuan: 280 }
+// Initialize jobs data with realistic random values
+const jobsTemplates = [
+  { id: 'belum-tidak-bekerja', pekerjaan: 'BELUM/TIDAK BEKERJA', baseCount: 1200, maleRatio: 0.4 },
+  { id: 'mengurus-rumah-tangga', pekerjaan: 'MENGURUS RUMAH TANGGA', baseCount: 2000, maleRatio: 0.01 },
+  { id: 'pelajar-mahasiswa', pekerjaan: 'PELAJAR/MAHASISWA', baseCount: 1600, maleRatio: 0.51 },
+  { id: 'pensiunan', pekerjaan: 'PENSIUNAN', baseCount: 360, maleRatio: 0.58 },
+  { id: 'pegawai-negeri-sipil-pns', pekerjaan: 'PEGAWAI NEGERI SIPIL (PNS)', baseCount: 900, maleRatio: 0.49 },
+  { id: 'tentara-nasional-indonesia', pekerjaan: 'TENTARA NASIONAL INDONESIA', baseCount: 800, maleRatio: 0.96 },
+  { id: 'kepolisian-ri-polri', pekerjaan: 'KEPOLISIAN RI (POLRI)', baseCount: 750, maleRatio: 0.93 },
+  { id: 'perdagangan', pekerjaan: 'PERDAGANGAN', baseCount: 700, maleRatio: 0.43 },
+  { id: 'petani-pekebun', pekerjaan: 'PETANI/PEKEBUN', baseCount: 1470, maleRatio: 0.78 },
+  { id: 'peternak', pekerjaan: 'PETERNAK', baseCount: 340, maleRatio: 0.74 },
+  { id: 'nelayan-perikanan', pekerjaan: 'NELAYAN/PERIKANAN', baseCount: 350, maleRatio: 0.87 },
+  { id: 'industri', pekerjaan: 'INDUSTRI', baseCount: 630, maleRatio: 0.67 },
+  { id: 'konstruksi', pekerjaan: 'KONSTRUKSI', baseCount: 540, maleRatio: 0.95 },
+  { id: 'transportasi', pekerjaan: 'TRANSPORTASI', baseCount: 430, maleRatio: 0.90 },
+  { id: 'karyawan-swasta', pekerjaan: 'KARYAWAN SWASTA', baseCount: 1740, maleRatio: 0.57 },
+  { id: 'guru', pekerjaan: 'GURU', baseCount: 1340, maleRatio: 0.34 },
+  { id: 'dokter', pekerjaan: 'DOKTER', baseCount: 450, maleRatio: 0.46 },
+  { id: 'perawat', pekerjaan: 'PERAWAT', baseCount: 600, maleRatio: 0.25 },
+  { id: 'bidan', pekerjaan: 'BIDAN', baseCount: 315, maleRatio: 0.02 },
+  { id: 'pedagang', pekerjaan: 'PEDAGANG', baseCount: 1370, maleRatio: 0.47 },
+  { id: 'wiraswasta', pekerjaan: 'WIRASWASTA', baseCount: 1300, maleRatio: 0.65 },
+  { id: 'sopir', pekerjaan: 'SOPIR', baseCount: 360, maleRatio: 0.97 },
+  { id: 'tukang-batu', pekerjaan: 'TUKANG BATU', baseCount: 220, maleRatio: 0.99 },
+  { id: 'tukang-kayu', pekerjaan: 'TUKANG KAYU', baseCount: 180, maleRatio: 0.98 },
+  { id: 'tukang-jahit', pekerjaan: 'TUKANG JAHIT', baseCount: 240, maleRatio: 0.23 },
+  { id: 'mekanik', pekerjaan: 'MEKANIK', baseCount: 245, maleRatio: 0.96 },
+  { id: 'buruh-harian-lepas', pekerjaan: 'BURUH HARIAN LEPAS', baseCount: 600, maleRatio: 0.69 },
+  { id: 'karyawan-honorer', pekerjaan: 'KARYAWAN HONORER', baseCount: 420, maleRatio: 0.43 },
+  { id: 'teknisi', pekerjaan: 'TEKNISI', baseCount: 310, maleRatio: 0.90 },
+  { id: 'pekerjaan-lainnya', pekerjaan: 'PEKERJAAN LAINNYA', baseCount: 590, maleRatio: 0.53 }
 ];
+
+const defaultJobs: JobData[] = jobsTemplates.map(template => {
+  const variance = 0.8 + Math.random() * 0.4; // 80-120% dari base
+  const totalCount = Math.floor(template.baseCount * variance);
+  const laki = Math.floor(totalCount * template.maleRatio);
+  const perempuan = totalCount - laki;
+  
+  return {
+    id: template.id,
+    pekerjaan: template.pekerjaan,
+    laki,
+    perempuan,
+    jumlah: totalCount
+  };
+});
     await updateJobsData(defaultJobs);
 
-    // Initialize education data
-    const defaultEducation: EducationData[] = [
-      { id: 'tidak-sekolah', level: 'Tidak/Belum Sekolah', count: 1245 },
-      { id: 'belum-tamat-sd', level: 'Belum Tamat SD/Sederajat', count: 567 },
-      { id: 'tamat-sd', level: 'Tamat SD/Sederajat', count: 2134 },
-      { id: 'sltp', level: 'SLTP/Sederajat', count: 1876 },
-      { id: 'slta', level: 'SLTA/Sederajat', count: 2234 },
-      { id: 'diploma', level: 'Diploma I/II', count: 234 },
-      { id: 's1', level: 'Akademi/Diploma III/S. Muda', count: 345 },
-      { id: 's1-up', level: 'Diploma IV/Strata I', count: 456 },
-      { id: 's2', level: 'Strata II', count: 89 },
-      { id: 's3', level: 'Strata III', count: 100 }
+    // Initialize education data with realistic random values
+    const educationTemplates = [
+      { id: 'tidak-sekolah', tingkat_pendidikan: 'Tidak/Belum Sekolah', baseCount: 1200, maleRatio: 0.52 },
+      { id: 'belum-tamat-sd', tingkat_pendidikan: 'Belum Tamat SD/Sederajat', baseCount: 560, maleRatio: 0.49 },
+      { id: 'tamat-sd', tingkat_pendidikan: 'Tamat SD/Sederajat', baseCount: 2100, maleRatio: 0.49 },
+      { id: 'sltp', tingkat_pendidikan: 'SLTP/Sederajat', baseCount: 1870, maleRatio: 0.49 },
+      { id: 'slta', tingkat_pendidikan: 'SLTA/Sederajat', baseCount: 2200, maleRatio: 0.49 },
+      { id: 'diploma', tingkat_pendidikan: 'Diploma I/II', baseCount: 230, maleRatio: 0.49 },
+      { id: 's1', tingkat_pendidikan: 'Akademi/Diploma III/S. Muda', baseCount: 340, maleRatio: 0.49 },
+      { id: 's1-up', tingkat_pendidikan: 'Diploma IV/Strata I', baseCount: 450, maleRatio: 0.49 },
+      { id: 's2', tingkat_pendidikan: 'Strata II', baseCount: 85, maleRatio: 0.49 },
+      { id: 's3', tingkat_pendidikan: 'Strata III', baseCount: 95, maleRatio: 0.53 }
     ];
+
+    const defaultEducation: EducationData[] = educationTemplates.map(template => {
+      const variance = 0.8 + Math.random() * 0.4; // 80-120% dari base
+      const totalCount = Math.floor(template.baseCount * variance);
+      const laki = Math.floor(totalCount * template.maleRatio);
+      const perempuan = totalCount - laki;
+      
+      return {
+        id: template.id,
+        tingkat_pendidikan: template.tingkat_pendidikan,
+        laki,
+        perempuan,
+        jumlah: totalCount
+      };
+    });
+
     await updateEducationData(defaultEducation);
 
-    console.log('Demographic data initialized successfully');
+    console.log('Demographic data initialized successfully with random realistic values');
   } catch (error) {
     console.error('Error initializing demographic data:', error);
   }

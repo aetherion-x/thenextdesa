@@ -31,20 +31,24 @@ interface JobDataSet {
 // Simulasi data demografis dalam format lama untuk kompatibilitas UI
 interface DemographicDataCompat {
   population: {
-    total: number
+    jumlah: number
     male: number
     female: number
     lastUpdated: Date
   }
   religions: Array<{
-    name: string
-    count: number
+    agama: string
+    laki: number
+    perempuan: number
+    jumlah: number
     icon: string
   }>
   jobs: JobDataDisplay[]
   education: Array<{
-    level: string
-    count: number
+    tingkat_pendidikan: string
+    laki: number
+    perempuan: number
+    jumlah: number
   }>
   lastUpdated: Date
 }
@@ -66,14 +70,16 @@ export default function PopulationData() {
         // Transform data ke format lama untuk kompatibilitas UI
         const combinedData: DemographicDataCompat = {
           population: {
-            total: populationData.total,
+            jumlah: populationData.jumlah,
             male: populationData.male,
             female: populationData.female,
             lastUpdated: populationData.lastUpdated
           },
           religions: religionsData.map(r => ({
-            name: r.name,
-            count: r.count,
+            agama: r.agama,
+            laki: r.laki,
+            perempuan: r.perempuan,
+            jumlah: r.jumlah,
             icon: r.icon
           })),
           jobs: jobsData.map(j => ({
@@ -81,8 +87,10 @@ export default function PopulationData() {
             jumlah: j.laki + j.perempuan
           })),
           education: educationData.map(e => ({
-            level: e.level,
-            count: e.count
+            tingkat_pendidikan: e.tingkat_pendidikan,
+            laki: e.laki,
+            perempuan: e.perempuan,
+            jumlah: e.jumlah
           })),
           lastUpdated: populationData.lastUpdated
         }
@@ -94,7 +102,7 @@ export default function PopulationData() {
           semua: jobsData
             .map(item => ({
               jenis: item.pekerjaan,
-              jumlah: item.laki + item.perempuan
+              jumlah: item.jumlah
             }))
             .filter(item => item.jumlah > 0),
           
@@ -169,7 +177,7 @@ export default function PopulationData() {
   }, [])
 
   const educationData = {
-    labels: demographicData?.education?.map(edu => edu.level) || [
+    labels: demographicData?.education?.map(edu => edu.tingkat_pendidikan) || [
       "Tidak/Belum Sekolah",
       "Belum Tamat SD/Sederajat",
       "Tamat SD/Sederajat",
@@ -184,7 +192,7 @@ export default function PopulationData() {
     datasets: [
       {
         label: "Jumlah Penduduk",
-        data: demographicData?.education?.map(edu => edu.count) || [173, 201, 285, 140, 286, 22, 13, 26, 2, 0],
+        data: demographicData?.education?.map(edu => edu.jumlah) || [173, 201, 285, 140, 286, 22, 13, 26, 2, 0],
         backgroundColor: "#ff6b35",
         borderRadius: 5,
       },
@@ -237,7 +245,7 @@ export default function PopulationData() {
                   Total Penduduk
                 </p>
                 <p className="text-4xl font-bold text-black dark:text-white">
-                  {demographicData?.population?.total?.toLocaleString("id-ID") || "0"} Jiwa
+                  {demographicData?.population?.jumlah?.toLocaleString("id-ID") || "0"} Jiwa
                 </p>
               </div>
             </div>
@@ -279,17 +287,17 @@ export default function PopulationData() {
           </div>
           {(() => {
             const religions = demographicData?.religions || [
-              { name: "Islam", count: 8285 },
-              { name: "Kristen", count: 22 },
-              { name: "Katolik", count: 268 },
-              { name: "Hindu", count: 23 },
-              { name: "Buddha", count: 0 },
-              { name: "Konghucu", count: 0 },
-              { name: "Kepercayaan", count: 0 },
+              { agama: "Islam", laki: 4100, perempuan: 4185, jumlah: 8285 },
+              { agama: "Kristen", laki: 11, perempuan: 11, jumlah: 22 },
+              { agama: "Katolik", laki: 134, perempuan: 134, jumlah: 268 },
+              { agama: "Hindu", laki: 11, perempuan: 12, jumlah: 23 },
+              { agama: "Buddha", laki: 0, perempuan: 0, jumlah: 0 },
+              { agama: "Konghucu", laki: 0, perempuan: 0, jumlah: 0 },
+              { agama: "Kepercayaan", laki: 0, perempuan: 0, jumlah: 0 },
             ];
             
             // Mapping icon berdasarkan nama agama
-            const getIconForReligion = (name: string) => {
+            const getIconForReligion = (agama: string) => {
               const iconMap: { [key: string]: string } = {
                 "Islam": "fas fa-mosque",
                 "Kristen": "fas fa-church", 
@@ -299,7 +307,7 @@ export default function PopulationData() {
                 "Konghucu": "fas fa-yin-yang",
                 "Kepercayaan": "fas fa-pray"
               };
-              return iconMap[name] || "fas fa-pray";
+              return iconMap[agama] || "fas fa-pray";
             };
             
             const firstRowReligions = religions.slice(0, 4);
@@ -309,11 +317,11 @@ export default function PopulationData() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                   {firstRowReligions.map((religion, index) => (
                     <div key={index} className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-lg text-center flex flex-col items-center">
-                      <i className={`${getIconForReligion(religion.name)} text-blue-600 text-4xl mt-2 mb-6`}></i>
+                      <i className={`${getIconForReligion(religion.agama)} text-blue-600 text-4xl mt-2 mb-6`}></i>
                       <p className="text-4xl font-extrabold text-gray-900 dark:text-white">
-                        {religion.count.toLocaleString("id-ID")}
+                        {religion.jumlah.toLocaleString("id-ID")}
                       </p>
-                      <p className="mt-2 text-lg font-medium text-gray-600 dark:text-gray-300">{religion.name}</p>
+                      <p className="mt-2 text-lg font-medium text-gray-600 dark:text-gray-300">{religion.agama}</p>
                       <p className="text-sm text-gray-400 dark:text-gray-500">Jiwa</p>
                     </div>
                   ))}
@@ -321,11 +329,11 @@ export default function PopulationData() {
                 <div className="mt-8 flex justify-center flex-wrap gap-8">
                   {secondRowReligions.map((religion, index) => (
                     <div key={index} className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-lg text-center flex flex-col items-center w-full sm:w-auto lg:w-[calc(25%-1.5rem)]">
-                      <i className={`${getIconForReligion(religion.name)} text-blue-600 text-4xl mt-2 mb-6`}></i>
+                      <i className={`${getIconForReligion(religion.agama)} text-blue-600 text-4xl mt-2 mb-6`}></i>
                       <p className="text-4xl font-extrabold text-gray-900 dark:text-white">
-                        {religion.count.toLocaleString("id-ID")}
+                        {religion.jumlah.toLocaleString("id-ID")}
                       </p>
-                      <p className="mt-2 text-lg font-medium text-gray-600 dark:text-gray-300">{religion.name}</p>
+                      <p className="mt-2 text-lg font-medium text-gray-600 dark:text-gray-300">{religion.agama}</p>
                       <p className="text-sm text-gray-400 dark:text-gray-500">Jiwa</p>
                     </div>
                   ))}
