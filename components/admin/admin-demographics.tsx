@@ -5,8 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Save, RefreshCw, Users, Heart, Briefcase, GraduationCap } from "lucide-react";
+import { ArrowLeft, Save, RefreshCw, Users, Heart, Briefcase, GraduationCap, Edit3, Search, X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { 
   getPopulationData,
   getReligionsData,
@@ -38,6 +40,9 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
   const [educationData, setEducationData] = useState<EducationData[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("population");
+  const [selectedJobId, setSelectedJobId] = useState<string>("");
+  const [jobSearchOpen, setJobSearchOpen] = useState(false);
+  const [jobSearchValue, setJobSearchValue] = useState("");
   const [successMessages, setSuccessMessages] = useState({
     population: false,
     religion: false,
@@ -61,6 +66,13 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
       unsubscribeEducation();
     };
   }, []);
+
+  // Set default selected job when jobs data is loaded
+  useEffect(() => {
+    if (jobsData.length > 0 && !selectedJobId) {
+      setSelectedJobId(jobsData[0].id);
+    }
+  }, [jobsData, selectedJobId]);
 
   const loadData = async () => {
     try {
@@ -344,8 +356,8 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
                       <Input
                         id={`religion-agama-${index}`}
                         value={religion.agama}
-                        onChange={(e) => updateReligion(index, 'agama', e.target.value)}
-                        className="mt-1"
+                        disabled
+                        className="mt-1 bg-gray-100 dark:bg-gray-800 cursor-not-allowed"
                       />
                     </div>
                     <div>
@@ -417,59 +429,140 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
                 </div>
               )}
               
-              <div className="space-y-4 max-h-96 overflow-y-auto">
-                {jobsData.map((job, index) => (
-                  <div key={job.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border rounded-lg">
-                    <div>
-                      <Label htmlFor={`job-name-${index}`}>Pekerjaan</Label>
-                      <Input
-                        id={`job-name-${index}`}
-                        value={job.pekerjaan}
-                        onChange={(e) => updateJob(index, 'pekerjaan', e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor={`job-male-${index}`}>Laki-laki</Label>
-                      <Input
-                        id={`job-male-${index}`}
-                        type="number"
-                        value={job.laki}
-                        onChange={(e) => {
-                          const laki = parseInt(e.target.value) || 0;
-                          updateJob(index, 'laki', laki);
-                          updateJob(index, 'jumlah', laki + job.perempuan);
-                        }}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor={`job-female-${index}`}>Perempuan</Label>
-                      <Input
-                        id={`job-female-${index}`}
-                        type="number"
-                        value={job.perempuan}
-                        onChange={(e) => {
-                          const perempuan = parseInt(e.target.value) || 0;
-                          updateJob(index, 'perempuan', perempuan);
-                          updateJob(index, 'jumlah', job.laki + perempuan);
-                        }}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor={`job-jumlah-${index}`}>Jumlah</Label>
-                      <Input
-                        id={`job-jumlah-${index}`}
-                        type="number"
-                        value={job.jumlah}
-                        disabled
-                        className="mt-1 bg-gray-100 dark:bg-gray-800"
-                      />
+              {/* Search untuk memilih pekerjaan */}
+              <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="job-search" className="text-sm font-medium mb-2 block text-green-800 dark:text-green-200">
+                      Cari Pekerjaan
+                    </Label>
+                    <Popover open={jobSearchOpen} onOpenChange={setJobSearchOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={jobSearchOpen}
+                          className="w-full justify-between bg-white dark:bg-gray-800 border-green-300 dark:border-green-600 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700"
+                        >
+                          {selectedJobId
+                            ? jobsData.find((job) => job.id === selectedJobId)?.pekerjaan
+                            : "Cari dan pilih pekerjaan..."}
+                          <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-full p-0 bg-white dark:bg-gray-800 border-green-300 dark:border-green-600">
+                        <Command className="bg-white dark:bg-gray-800">
+                          <CommandInput 
+                            placeholder="Ketik untuk mencari pekerjaan..." 
+                            value={jobSearchValue}
+                            onValueChange={setJobSearchValue}
+                            className="text-gray-900 dark:text-white"
+                          />
+                          <CommandEmpty className="text-gray-500 dark:text-gray-400 p-4">
+                            Pekerjaan tidak ditemukan.
+                          </CommandEmpty>
+                          <CommandGroup className="max-h-64 overflow-y-auto">
+                            {jobsData
+                              .filter((job) =>
+                                job.pekerjaan.toLowerCase().includes(jobSearchValue.toLowerCase())
+                              )
+                              .map((job) => (
+                                <CommandItem
+                                  key={job.id}
+                                  value={job.id}
+                                  onSelect={(currentValue) => {
+                                    setSelectedJobId(currentValue === selectedJobId ? "" : currentValue);
+                                    setJobSearchOpen(false);
+                                    setJobSearchValue("");
+                                  }}
+                                  className="text-gray-900 dark:text-white hover:bg-green-50 dark:hover:bg-green-900/30 cursor-pointer"
+                                >
+                                  <Briefcase className="mr-2 h-4 w-4 text-green-600 dark:text-green-400" />
+                                  <div className="flex flex-col">
+                                    <span className="font-medium">{job.pekerjaan}</span>
+                                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                                      L: {job.laki} | P: {job.perempuan} | Total: {job.jumlah}
+                                    </span>
+                                  </div>
+                                </CommandItem>
+                              ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </div>
+              </div>
+
+              {/* Form edit data pekerjaan yang dipilih */}
+              {selectedJobId && (() => {
+                const selectedJob = jobsData.find(job => job.id === selectedJobId);
+                const jobIndex = jobsData.findIndex(job => job.id === selectedJobId);
+                
+                if (!selectedJob) return null;
+                
+                return (
+                  <div className="mb-6 p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                      <Briefcase className="w-5 h-5 mr-2 text-green-600" />
+                      {selectedJob.pekerjaan}
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <Label htmlFor="selected-job-male" className="text-sm font-medium">
+                          Jumlah Laki-laki
+                        </Label>
+                        <Input
+                          id="selected-job-male"
+                          type="number"
+                          min="0"
+                          value={selectedJob.laki}
+                          onChange={(e) => {
+                            const laki = parseInt(e.target.value) || 0;
+                            updateJob(jobIndex, 'laki', laki);
+                            updateJob(jobIndex, 'jumlah', laki + selectedJob.perempuan);
+                          }}
+                          className="mt-1"
+                          placeholder="0"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="selected-job-female" className="text-sm font-medium">
+                          Jumlah Perempuan
+                        </Label>
+                        <Input
+                          id="selected-job-female"
+                          type="number"
+                          min="0"
+                          value={selectedJob.perempuan}
+                          onChange={(e) => {
+                            const perempuan = parseInt(e.target.value) || 0;
+                            updateJob(jobIndex, 'perempuan', perempuan);
+                            updateJob(jobIndex, 'jumlah', selectedJob.laki + perempuan);
+                          }}
+                          className="mt-1"
+                          placeholder="0"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="selected-job-total" className="text-sm font-medium">
+                          Total
+                        </Label>
+                        <Input
+                          id="selected-job-total"
+                          type="number"
+                          value={selectedJob.jumlah}
+                          disabled
+                          className="mt-1 bg-gray-100 dark:bg-gray-700 cursor-not-allowed"
+                        />
+                      </div>
                     </div>
                   </div>
-                ))}
-              </div>
+                );
+              })()}
             </CardContent>
           </Card>
         </TabsContent>
@@ -506,8 +599,8 @@ export default function AdminDemographics({ onBack }: AdminDemographicsProps) {
                       <Input
                         id={`education-level-${index}`}
                         value={education.tingkat_pendidikan}
-                        onChange={(e) => updateEducation(index, 'tingkat_pendidikan', e.target.value)}
-                        className="mt-1"
+                        disabled
+                        className="mt-1 bg-gray-100 dark:bg-gray-800 cursor-not-allowed"
                       />
                     </div>
                     <div>
